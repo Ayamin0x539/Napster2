@@ -1,0 +1,20 @@
+============================================
+Team Summary Spreadsheet (Responsibilities)
+============================================
+
+
+===============
+Aaron Huang
+===============
+- HTML, front-end
+- Database queries
+
+===============
+Jonathan Huang
+===============
+- Framework Expert
+
+===============
+Jonathan Roemer
+===============
+- Back-end administration (sysadmin)
