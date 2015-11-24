@@ -2,6 +2,7 @@
 Napster/iTunes/Bandcamp clone for CSE4701: Principles of Databases
 
 Requirements and to-do:
+*High Level*
 - Customer can register accounts
 - Customer can manage their accounts
 - Customer can set/manage payment types
@@ -27,4 +28,24 @@ millisecond, bytes, media-name)
 - Administrators can run reports on sales by city/state/country
 - Administrators can query employee productivity: number of customers per employee, sales per employee by month/duration period
 - Administrators can run inventory reports by track name, album name, artist name composer name, genre name, media name
+
+*Front End/Mock Ups*
+- Registration Screen
+- Login Screen
+- "Edit your information" screen
+- Customer dashboard
+- Employee Dashboard
+- (Customer) Set/edit payment types screen
+- (Customer) Pending/completed orders screen
+- (Customer) Create/manage myplaylists 
+- (Customer) Order screen
+- (Customer) Shopping cart screen
+- (Employee) Active order screen
+- (Employee) Enter/edit new media screen
+- (Employee) Create/manage playlists screen
+- (Employee) Review customer demographic screen
+- (Administrator) Sales reporting screen
+- (Administrator) Employee productivity reporting screen
+- (Administrator) Inventory reporting screen
+- (Administrator) Customer reporting screen
 
