@@ -15,14 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from napster2 import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^home/', views.homepage),
-    url(r'^registration', views.registration),
-    url(r'^login', views.login), 
-    url(r'^dashboard', views.dashboard),
-    url(r'^manageplaylist', views.manageplaylist),
-    url(r'^search', views.search),
-
+    url(r'^$', views.index),
+#    url(r'^register', views.register),
+#    url(r'^login', views.login), 
+#    url(r'^dashboard', views.dashboard),
+#    url(r'^manageplaylist', views.manageplaylist),
+#    url(r'^search', views.search),
 ]
