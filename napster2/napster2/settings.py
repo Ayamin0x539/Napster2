@@ -26,9 +26,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# If a user wants to access a method that requires logging in and they are
+# not logged in, then redirect them to the home page:
+import django.contrib.auth
+django.contrib.auth.LOGIN_URL = '/'
 
 # Application definition
-
+ 
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -36,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'napster2',
 )
 
 MIDDLEWARE_CLASSES = (

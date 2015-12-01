@@ -154,7 +154,7 @@ class Myplaylisttracks(models.Model):
     class Meta:
         managed = False
         db_table = 'MyPlaylistTracks'
-        unique_together = (('MyPlaylistID', 'TrackID'),)
+        unique_together = (('myplaylistid', 'trackid'),)
 
 
 class Order(models.Model):
@@ -175,7 +175,7 @@ class Ordercustplaylist(models.Model):
     class Meta:
         managed = False
         db_table = 'OrderCustPlaylist'
-        unique_together = (('OrderCustID', 'CustPlaylistID'),)
+        unique_together = (('ordercustid', 'custplaylistid'),)
 
 
 class Orderempplaylist(models.Model):
@@ -185,7 +185,7 @@ class Orderempplaylist(models.Model):
     class Meta:
         managed = False
         db_table = 'OrderEmpPlaylist'
-        unique_together = (('OrderEmpID', 'EmpPlaylistID'),)
+        unique_together = (('orderempid', 'empplaylistid'),)
 
 
 class Payment(models.Model):
@@ -240,7 +240,7 @@ class Playlisttrack(models.Model):
     class Meta:
         managed = False
         db_table = 'PlaylistTrack'
-        unique_together = (('PlaylistId', 'TrackId'),)
+        unique_together = (('playlistid', 'trackid'),)
 
 
 class Track(models.Model):
@@ -268,8 +268,8 @@ class AuthGroup(models.Model):
 
 
 class AuthGroupPermissions(models.Model):
-    group = models.ForeignKey(AuthGroup)
-    permission = models.ForeignKey('AuthPermission')
+    group_id = models.ForeignKey(AuthGroup)
+    permission_id = models.ForeignKey('AuthPermission')
 
     class Meta:
         managed = False
@@ -279,7 +279,7 @@ class AuthGroupPermissions(models.Model):
 
 class AuthPermission(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType')
+    content_type_id = models.ForeignKey('DjangoContentType')
     codename = models.CharField(max_length=100)
 
     class Meta:
@@ -306,8 +306,8 @@ class AuthUser(models.Model):
 
 
 class AuthUserGroups(models.Model):
-    user = models.ForeignKey(AuthUser)
-    group = models.ForeignKey(AuthGroup)
+    user_id = models.ForeignKey(AuthUser)
+    group_id = models.ForeignKey(AuthGroup)
 
     class Meta:
         managed = False
@@ -316,8 +316,8 @@ class AuthUserGroups(models.Model):
 
 
 class AuthUserUserPermissions(models.Model):
-    user = models.ForeignKey(AuthUser)
-    permission = models.ForeignKey(AuthPermission)
+    user_id = models.ForeignKey(AuthUser)
+    permission_id = models.ForeignKey(AuthPermission)
 
     class Meta:
         managed = False
