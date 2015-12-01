@@ -46,7 +46,8 @@ python3 manage.py runserver <port>
 
 If the port option is left out, it defaults to 8000.
 
-Requirements and to-do:
+# Requirements and TODO list
+
 *High Level*
 - Customer can register accounts
 - Customer can manage their accounts
