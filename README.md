@@ -39,6 +39,13 @@ Create the relevant django tables by executing the following:
 python3 manage.py migrate
 ````
 
+Create yourself a superuser account by executing the following:
+````
+python3 manage.py createsuperuser
+````
+
+Follow the prompts and create your new superuser.
+
 Finally, run the server by executing the following:
 ````
 python3 manage.py runserver <port>
