@@ -23,7 +23,22 @@ class RegistrationForm(forms.Form):
         return self.cleaned_data
 
 class AccountManagementForm(forms.Form):
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
+#    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
+    firstname = forms.CharField(label='First Name', max_length=40)
+    lastname = forms.CharField(label='Last Name', max_length=20)
+    phone = forms.CharField(label='Phone Number', max_length=60)
+    email = forms.CharField(label='Email', max_length=30)
+    postalcode = forms.CharField(label='Zip/Postal Code', max_length=10)
+    address = forms.CharField(label='Address', max_length = 70)
+    city = forms.CharField(label='City', max_length=40)
+    state = forms.CharField(label='State', max_length=40)
+    country = forms.CharField(label='Country', max_length=45)
+    fax = forms.CharField(label='Fax', max_length=45)
+    # payment info
+    creditcardnumber = forms.CharField(label='Credit Card Number', max_length=16)
+    paypalemail = forms.CharField(label='Paypal Email', max_length=30)
+    googlepayid = forms.CharField(label='GooglePay ID', max_length=30)
+    applepayid = forms.CharField(label='AppleID (ApplePay)', max_length=30)
 
 class EditPaymentsForm(forms.Form):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))    

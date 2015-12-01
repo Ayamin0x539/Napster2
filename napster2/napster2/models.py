@@ -208,6 +208,8 @@ class Paypal(models.Model):
 
 class Person(models.Model):
     personid = models.AutoField(db_column='PersonID', primary_key=True)  # Field name made lowercase.
+    username = models.CharField(db_column='Username', max_length=30, blank=True, null=True) # This is technically also a primary key... shhhh...
+    group = models.CharField(db_column='Group', max_length=15, blank=True, null=True) # Customer, Employee, Administrator (also Employee)
     lastname = models.CharField(db_column='LastName', max_length=20, blank=True, null=True)  # Field name made lowercase.
     firstname = models.CharField(db_column='FirstName', max_length=40, blank=True, null=True)  # Field name made lowercase.
     postalcode = models.CharField(db_column='PostalCode', max_length=10, blank=True, null=True)  # Field name made lowercase.
@@ -218,11 +220,13 @@ class Person(models.Model):
     email = models.CharField(db_column='Email', max_length=60, blank=True, null=True)  # Field name made lowercase.
     fax = models.CharField(db_column='Fax', max_length=45, blank=True, null=True)  # Field name made lowercase.
     phone = models.CharField(db_column='Phone', max_length=60, blank=True, null=True)  # Field name made lowercase.
+    creditcardnumber = models.CharField(db_column='CreditCardNumber', max_length=16, blank=True, null=True)
+    googlepayid = models.CharField(db_column='GooglepayID', max_length=30, blank=True, null=True)
+    applepayid = models.CharField(db_column='ApplepayID', max_length=30, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Person'
-
 
 class Playlist(models.Model):
     playlistid = models.IntegerField(db_column='PlaylistId', primary_key=True)  # Field name made lowercase.
