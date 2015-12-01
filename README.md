@@ -105,9 +105,9 @@ millisecond, bytes, media-name)
 # Search Bar Options
 * Enter search term
 * Dropdown menu which allows for searching one of the following query options
-..* Artist
-..* Album
-..* Track
-..* Composer
+  * Artist
+  * Album
+  * Track
+  * Composer
 * Output field for the results of the query
-..* Includes buttons to add each result to a query or a playlist
+  * Includes buttons to add each result to a query or a playlist
