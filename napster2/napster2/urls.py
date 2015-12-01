@@ -29,4 +29,6 @@ urlpatterns = [
     url(r'^logout/$', views.logout_page),
 #    url(r'^manageplaylist', views.manageplaylist),
 #    url(r'^search', views.search),
+#    url(r'^checkout', views.checkout),
+#    url(r'^checkout_success', views.checkout_success),
 ]
