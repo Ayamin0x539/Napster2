@@ -1,129 +1,369 @@
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+#
+# Also note: You'll have to insert the output of 'django-admin sqlcustom [app_label]'
+# into your database.
+from __future__ import unicode_literals
+
 from django.db import models
 
-class Album(models.Model):
-	AlbumId = models.IntegerField(primary_key=True)
-	Title = models.CharField(max_length=160)
-	ArtistId= models.ForeignKey('Artist')
 
-class ApplePay(models.Model):
-	AppleInvoiceID = models.ForeignKey('Invoice',primary_key=True) 
-	AppleID = models.CharField(max_length=60)
+class Album(models.Model):
+    albumid = models.IntegerField(db_column='AlbumId', primary_key=True)  # Field name made lowercase.
+    title = models.CharField(db_column='Title', max_length=160)  # Field name made lowercase.
+    artistid = models.ForeignKey('Artist', db_column='ArtistId')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Album'
+
+
+class Applepay(models.Model):
+    appleinvoiceid = models.ForeignKey('Invoice', db_column='AppleInvoiceID', primary_key=True)  # Field name made lowercase.
+    appleid = models.CharField(db_column='AppleID', max_length=60, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'ApplePay'
+
 
 class Artist(models.Model):
-	ArtistId = models.IntegerField(primary_key=True) 
-	Name = models.CharField(max_length=120)
+    artistid = models.IntegerField(db_column='ArtistId', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=120, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Artist'
+
 
 class Clips(models.Model):
-	ClipsTrackId = models.ForeignKey('Track',primary_key=True)
-	ItunesURL = models.CharField(max_length=205)
-	GoogleURl = models.CharField(max_length=205)
+    clipstrackid = models.ForeignKey('Track', db_column='ClipsTrackId', primary_key=True)  # Field name made lowercase.
+    itunesurl = models.CharField(db_column='ItunesURL', max_length=205, blank=True, null=True)  # Field name made lowercase.
+    googleurl = models.CharField(db_column='GoogleURL', max_length=205, blank=True, null=True)  # Field name made lowercase.
 
-class CreditCard(models.Model):
-	CCInvoiceID = models.ForeignKey('Invoice',primary_key=True)
-	CCNum = models.CharField(max_length=60)
+    class Meta:
+        managed = False
+        db_table = 'Clips'
+
+
+class Creditcard(models.Model):
+    ccinvoiceid = models.ForeignKey('Invoice', db_column='CCInvoiceID', primary_key=True)  # Field name made lowercase.
+    ccnum = models.CharField(db_column='CCNum', max_length=60, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'CreditCard'
+
 
 class Customer(models.Model):
-	CustomerId = models.IntegerField(primary_key=True)
-	SupportRepId = models.ForeignKey('Employee')
-	CustPersonID = models.ForeignKey('Person')
+    customerid = models.IntegerField(db_column='CustomerId', primary_key=True)  # Field name made lowercase.
+    supportrepid = models.ForeignKey('Employee', db_column='SupportRepId', blank=True, null=True)  # Field name made lowercase.
+    custpersonid = models.ForeignKey('Person', db_column='CustPersonID', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Customer'
+
 
 class Employee(models.Model):
-	EmployeeId = models.IntegerField(primary_key=True)
-	Title = models.CharField(max_length=30)
-	ReportsTo = models.ForeignKey('Employee')
-	BirthDate = models.DateField()
-	HireDate = models.DateField()
-	PersonID = models.ForeignKey('Person')
+    employeeid = models.IntegerField(db_column='EmployeeId', primary_key=True)  # Field name made lowercase.
+    title = models.CharField(db_column='Title', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    reportsto = models.ForeignKey('self', db_column='ReportsTo', blank=True, null=True)  # Field name made lowercase.
+    birthdate = models.DateTimeField(db_column='BirthDate', blank=True, null=True)  # Field name made lowercase.
+    hiredate = models.DateTimeField(db_column='HireDate', blank=True, null=True)  # Field name made lowercase.
+    personid = models.IntegerField(db_column='PersonID', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Employee'
+
 
 class Genre(models.Model):
-	GenreId = models.IntegerField(primary_key=True)
-	Name = models.CharField(max_length=120)
+    genreid = models.IntegerField(db_column='GenreId', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=120, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Genre'
+
 
 class Google(models.Model):
-	GoogleInvoiceID = models.ForeignKey('Invoice', primary_key=True)
-	GoogleID = models.CharField(max_length=60)
+    googleinvoiceid = models.ForeignKey('Invoice', db_column='GoogleInvoiceID', primary_key=True)  # Field name made lowercase.
+    googleid = models.CharField(db_column='GoogleID', max_length=60, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Google'
+
 
 class Invoice(models.Model):
-	InvoiceId = models.IntegerField(primary_key=True)
-	CustomerId = models.ForeignKey('Customer')
-	InvoiceDate = models.DateField()
-	BillingAddress = models.CharField(max_length=70)
-	BillingCity = models.CharField(max_length=40)
-	BillingState = models.CharField(max_length=40)#could be a dropdown
-	BillingCountry = models.CharField(max_length=40)#could also be a dropdown
-	BillingPostalCode = models.CharField(max_length=10)
-	Total = models.DecimalField(max_digits=100, decimal_places=2)
+    invoiceid = models.IntegerField(db_column='InvoiceId', primary_key=True)  # Field name made lowercase.
+    customerid = models.ForeignKey(Customer, db_column='CustomerId')  # Field name made lowercase.
+    invoicedate = models.DateTimeField(db_column='InvoiceDate')  # Field name made lowercase.
+    billingaddress = models.CharField(db_column='BillingAddress', max_length=70, blank=True, null=True)  # Field name made lowercase.
+    billingcity = models.CharField(db_column='BillingCity', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    billingstate = models.CharField(db_column='BillingState', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    billingcountry = models.CharField(db_column='BillingCountry', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    billingpostalcode = models.CharField(db_column='BillingPostalCode', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    total = models.DecimalField(db_column='Total', max_digits=10, decimal_places=2)  # Field name made lowercase.
 
-class InvoiceLine(models.Model):
-	InvoiceLineId = models.IntegerField(primary_key=True)
-	InvoiceId = models.ForeignKey('Invoice')
-	TrackId = models.ForeignKey('Track')
-	UnitPrice = models.DecimalField(max_digits=10, decimal_places=2)
-	Quantity = models.IntegerField()
+    class Meta:
+        managed = False
+        db_table = 'Invoice'
 
-class MediaType(models.Model):
-	MediaTypeId = models.IntegerField(primary_key=True)
-	Name = models.CharField(max_length=120)
 
-class MyPlaylist(models.Model):
-	MyPlaylistID = models.IntegerField(primary_key=True)
-	Name = models.CharField(max_length=120)
-	CustomerId = models.ForeignKey('Customer')
+class Invoiceline(models.Model):
+    invoicelineid = models.IntegerField(db_column='InvoiceLineId', primary_key=True)  # Field name made lowercase.
+    invoiceid = models.ForeignKey(Invoice, db_column='InvoiceId')  # Field name made lowercase.
+    trackid = models.ForeignKey('Track', db_column='TrackId')  # Field name made lowercase.
+    unitprice = models.DecimalField(db_column='UnitPrice', max_digits=10, decimal_places=2)  # Field name made lowercase.
+    quantity = models.IntegerField(db_column='Quantity')  # Field name made lowercase.
 
-class MyPlaylistTracks(models.Model):
-	MyPlaylistID = models.ForeignKey('MyPlaylist')
-	TrackID = models.ForeignKey('Track')
+    class Meta:
+        managed = False
+        db_table = 'InvoiceLine'
+
+
+class Mediatype(models.Model):
+    mediatypeid = models.IntegerField(db_column='MediaTypeId', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=120, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'MediaType'
+
+
+class Myplaylist(models.Model):
+    myplaylistid = models.IntegerField(db_column='MyPlaylistID', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=45)  # Field name made lowercase.
+    customerid = models.ForeignKey(Customer, db_column='CustomerID')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'MyPlaylist'
+
+
+class Myplaylisttracks(models.Model):
+    myplaylistid = models.ForeignKey(Myplaylist, db_column='MyPlaylistID')  # Field name made lowercase.
+    trackid = models.ForeignKey('Track', db_column='TrackID')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'MyPlaylistTracks'
+        unique_together = (('MyPlaylistID', 'TrackID'),)
+
 
 class Order(models.Model):
-	OrderID = models.IntegerField(primary_key=True)
-	CustomerID = models.ForeignKey('Customer')
-	PlaylistMadBy = models.CharField(max_length=45)
-	Price = models.CharField(max_length=45)#should probably be a decimal, may have to propogate change in DB
+    orderid = models.IntegerField(db_column='OrderID', primary_key=True)  # Field name made lowercase.
+    customerid = models.ForeignKey(Customer, db_column='CustomerID')  # Field name made lowercase.
+    playlistmadby = models.CharField(db_column='PlaylistMadBy', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    price = models.CharField(db_column='Price', max_length=45, blank=True, null=True)  # Field name made lowercase.
 
-class OrderCustPlaylist(models.Model):
-	OrderCustID = models.ForeignKey('Order')
-	CustPlaylistID = models.ForeignKey('MyPlaylist')
+    class Meta:
+        managed = False
+        db_table = 'Order'
 
-class OrderEmpPlaylist(models.Model):
-	OrderEmpID = models.ForeignKey('Order')
-	EmpPlaylistID = models.ForeignKey('Playlist')
+
+class Ordercustplaylist(models.Model):
+    ordercustid = models.ForeignKey(Order, db_column='OrderCustID')  # Field name made lowercase.
+    custplaylistid = models.ForeignKey(Myplaylist, db_column='CustPlaylistID')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'OrderCustPlaylist'
+        unique_together = (('OrderCustID', 'CustPlaylistID'),)
+
+
+class Orderempplaylist(models.Model):
+    orderempid = models.ForeignKey(Order, db_column='OrderEmpID')  # Field name made lowercase.
+    empplaylistid = models.ForeignKey('Playlist', db_column='EmpPlaylistID')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'OrderEmpPlaylist'
+        unique_together = (('OrderEmpID', 'EmpPlaylistID'),)
+
 
 class Payment(models.Model):
-	PaymentID = models.IntegerField(primary_key=True)
-	Type = models.CharField(max_length=45)#should probably be an enumerated value
+    paymentid = models.IntegerField(db_column='PaymentID', primary_key=True)  # Field name made lowercase.
+    type = models.CharField(db_column='Type', max_length=45, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Payment'
+
 
 class Paypal(models.Model):
-	PaypalInvoiceID = models.ForeignKey('Invoice')
-	Email = models.CharField(max_length=60)
+    paypalinvoiceid = models.ForeignKey(Invoice, db_column='PaypalInvoiceID', primary_key=True)  # Field name made lowercase.
+    email = models.CharField(db_column='Email', max_length=60, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Paypal'
+
 
 class Person(models.Model):
-	PersonID = models.IntegerField(primary_key=True)
-	LastName = models.CharField(max_length=20)
-	FirstName = models.CharField(max_length=40)
-	PostalCode = models.CharField(max_length=10)
-	Address = models.CharField(max_length=70)
-	City = models.CharField(max_length=40)
-	State = models.CharField(max_length=45)
-	Country = models.CharField(max_length=45)
-	Email = models.CharField(max_length=60)
-	Fax = models.CharField(max_length=45)
-	Phone = models.CharField(max_length=60)
+    personid = models.AutoField(db_column='PersonID', primary_key=True)  # Field name made lowercase.
+    lastname = models.CharField(db_column='LastName', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    firstname = models.CharField(db_column='FirstName', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    postalcode = models.CharField(db_column='PostalCode', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    address = models.CharField(db_column='Address', max_length=70, blank=True, null=True)  # Field name made lowercase.
+    city = models.CharField(db_column='City', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    state = models.CharField(db_column='State', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    country = models.CharField(db_column='Country', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    email = models.CharField(db_column='Email', max_length=60, blank=True, null=True)  # Field name made lowercase.
+    fax = models.CharField(db_column='Fax', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    phone = models.CharField(db_column='Phone', max_length=60, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Person'
+
 
 class Playlist(models.Model):
-	PlaylistID = models.IntegerField(primary_key=True)
-	Name = models.CharField(max_length=120)
+    playlistid = models.IntegerField(db_column='PlaylistId', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=120, blank=True, null=True)  # Field name made lowercase.
 
-class PlaylistTrack(models.Model):
-	PlaylistID = models.ForeignKey('Playlist')
-	TrackID = models.ForeignKey('Track')
+    class Meta:
+        managed = False
+        db_table = 'Playlist'
+
+
+class Playlisttrack(models.Model):
+    playlistid = models.ForeignKey(Playlist, db_column='PlaylistId')  # Field name made lowercase.
+    trackid = models.ForeignKey('Track', db_column='TrackId')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'PlaylistTrack'
+        unique_together = (('PlaylistId', 'TrackId'),)
+
 
 class Track(models.Model):
-	TrackID = models.IntegerField(primary_key=True)
-	Name = models.CharField(max_length=200)
-	AlbumId = models.ForeignKey('Album')	
-	MediaTypeId = models.ForeignKey('MediaType')
-	GenreId = models.ForeignKey('Genre')
-	Composer = models.CharField(max_length=220)
-	Miliseconds = models.IntegerField()
-	Bytes = models.IntegerField()
-	UnitPrice = models.DecimalField(max_digits=10, decimal_places=2)
+    trackid = models.IntegerField(db_column='TrackId', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=200)  # Field name made lowercase.
+    albumid = models.ForeignKey(Album, db_column='AlbumId', blank=True, null=True)  # Field name made lowercase.
+    mediatypeid = models.ForeignKey(Mediatype, db_column='MediaTypeId')  # Field name made lowercase.
+    genreid = models.ForeignKey(Genre, db_column='GenreId', blank=True, null=True)  # Field name made lowercase.
+    composer = models.CharField(db_column='Composer', max_length=220, blank=True, null=True)  # Field name made lowercase.
+    milliseconds = models.IntegerField(db_column='Milliseconds')  # Field name made lowercase.
+    bytes = models.IntegerField(db_column='Bytes', blank=True, null=True)  # Field name made lowercase.
+    unitprice = models.DecimalField(db_column='UnitPrice', max_digits=10, decimal_places=2)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Track'
+
+
+class AuthGroup(models.Model):
+    name = models.CharField(unique=True, max_length=80)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group'
+
+
+class AuthGroupPermissions(models.Model):
+    group = models.ForeignKey(AuthGroup)
+    permission = models.ForeignKey('AuthPermission')
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group_permissions'
+        unique_together = (('group_id', 'permission_id'),)
+
+
+class AuthPermission(models.Model):
+    name = models.CharField(max_length=255)
+    content_type = models.ForeignKey('DjangoContentType')
+    codename = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_permission'
+        unique_together = (('content_type_id', 'codename'),)
+
+
+class AuthUser(models.Model):
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.IntegerField()
+    username = models.CharField(unique=True, max_length=30)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    email = models.CharField(max_length=254)
+    is_staff = models.IntegerField()
+    is_active = models.IntegerField()
+    date_joined = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user'
+
+
+class AuthUserGroups(models.Model):
+    user = models.ForeignKey(AuthUser)
+    group = models.ForeignKey(AuthGroup)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_groups'
+        unique_together = (('user_id', 'group_id'),)
+
+
+class AuthUserUserPermissions(models.Model):
+    user = models.ForeignKey(AuthUser)
+    permission = models.ForeignKey(AuthPermission)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_user_permissions'
+        unique_together = (('user_id', 'permission_id'),)
+
+
+class DjangoAdminLog(models.Model):
+    action_time = models.DateTimeField()
+    object_id = models.TextField(blank=True, null=True)
+    object_repr = models.CharField(max_length=200)
+    action_flag = models.SmallIntegerField()
+    change_message = models.TextField()
+    content_type = models.ForeignKey('DjangoContentType', blank=True, null=True)
+    user = models.ForeignKey(AuthUser)
+
+    class Meta:
+        managed = False
+        db_table = 'django_admin_log'
+
+
+class DjangoContentType(models.Model):
+    app_label = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'django_content_type'
+        unique_together = (('app_label', 'model'),)
+
+
+class DjangoMigrations(models.Model):
+    app = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    applied = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_migrations'
+
+
+class DjangoSession(models.Model):
+    session_key = models.CharField(primary_key=True, max_length=40)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_session'
