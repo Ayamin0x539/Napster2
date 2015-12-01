@@ -1,7 +1,60 @@
 # Napster2
 Napster/iTunes/Bandcamp clone for CSE4701: Principles of Databases
 
-Requirements and to-do:
+# Installation instructions
+This assumes Ubuntu 12.04 LTS or 14.04 LTS. Other platforms have not been
+tested.
+
+````
+sudo apt-get install mysql
+sudo apt-get install mysql-workbench
+sudo apt-get install libmysqlclient-dev
+````
+Download the most recent version of mysqlclient from
+https://pypi.python.org/pypi/mysqlclient
+
+````
+cd ~/Downloads
+tar -xzvf mysqlclient-<version>.tar.gz
+cd mysqlclient-<version>.tar.gz
+python3 setup.py build
+sudo python3 setup.py install
+````
+
+Delete any existing Chinook schemas in MySQL Workbench by right-clicking on the
+schema and choosing
+
+Click the cylinder with a + to create a new schema in the connected server.
+
+Name the new schema "Chinook" and press Apply.
+
+Click "Apply" and then "Close" in the prompt that appears.
+
+Import our provided Chinook_startingstate.sql file my clicking the SQL logo with
+a folder on it to Open a SQL script file in a new query tab. Run the query to 
+fill the Chinook database with the relevant information.
+
+Create the relevant django tables by executing the following:
+````
+python3 manage.py migrate
+````
+
+Create yourself a superuser account by executing the following:
+````
+python3 manage.py createsuperuser
+````
+
+Follow the prompts and create your new superuser.
+
+Finally, run the server by executing the following:
+````
+python3 manage.py runserver <port>
+````
+
+If the port option is left out, it defaults to 8000.
+
+# Requirements and TODO list
+
 *High Level*
 - Customer can register accounts
 - Customer can manage their accounts
