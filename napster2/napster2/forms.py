@@ -21,3 +21,14 @@ class RegistrationForm(forms.Form):
             if self.cleaned_data['password1'] != self.cleaned_data['password2']:
                 raise forms.ValidationError(_("The two password fields did not match."))
         return self.cleaned_data
+
+def AccountManagementForm(forms.Form):
+
+def EditPaymentsForm(forms.Form):
+
+def EmployeeEnterNewMediaForm(forms.Form):
+
+def AdministratorRunReportFOrm(forms.Form):
+
+def AdministratorEmployeeProductivityForm(forms.Form):
+
