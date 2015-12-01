@@ -22,13 +22,18 @@ class RegistrationForm(forms.Form):
                 raise forms.ValidationError(_("The two password fields did not match."))
         return self.cleaned_data
 
-def AccountManagementForm(forms.Form):
+class AccountManagementForm(forms.Form):
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
 
-def EditPaymentsForm(forms.Form):
+class EditPaymentsForm(forms.Form):
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))    
 
-def EmployeeEnterNewMediaForm(forms.Form):
+class EmployeeEnterNewMediaForm(forms.Form):
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))    
 
-def AdministratorRunReportFOrm(forms.Form):
+class AdministratorRunReportForm(forms.Form):
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))    
 
-def AdministratorEmployeeProductivityForm(forms.Form):
+class AdministratorEmployeeProductivityForm(forms.Form):
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))    
 

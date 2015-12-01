@@ -1,4 +1,5 @@
 from napster2.forms import *
+from napster2.models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
@@ -22,10 +23,17 @@ def register(request):
                 password=form.cleaned_data['password1'],
                 email=form.cleaned_data['email']
                 )
+
+            person = Person(email = form.cleaned_data['email'])
+            person.save()
+
             return HttpResponseRedirect('/register/success/')
+        else:
+            return render_to_response('registration/failure.html')
     else:
         form = RegistrationForm()
         variables = RequestContext(request, {'form': form})
+        # can pull the variable "form" from the view.
         return render_to_response('registration/register.html', variables,)
 
 def register_success(request):
@@ -38,3 +46,25 @@ def logout_page(request):
 @login_required
 def dashboard(request):
     return render_to_response('dashboard.html', { 'user': request.user })
+
+@login_required
+def update_payment_info(request):
+    form = EditPaymentsForm(request.POST)
+#    if form.is_valid():
+    return render_to_response('updatepaymentsuccess.html')
+
+@login_required
+def update_account_info(request):
+    form = AccountManagementForm(request.POST)
+
+@login_required
+def enter_new_media(request):
+    form = EmployeeEnterNewMediaForm(request.POST)
+
+@login_required
+def run_report(request):
+    form = AdministratorRunReportForm(request.POST)
+
+@login_required
+def employee_productivity_Report(request):
+    form = AdministratorEmployeeProductivityForm(request.POST)

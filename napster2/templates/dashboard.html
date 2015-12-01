@@ -4,5 +4,8 @@
 {% block content %}
 <p>You are currently logged in as {{ user.username }}. This is the dashboard.</p>
 
+<p> 
+  Group: {{ user.groups.all.0 }}
+</p>
 <a href="/logout/">Logout</a>
 {% endblock %}
