@@ -2,8 +2,12 @@
 {% block title %}Welcome to Napster 2!{% endblock %}
 {% block head %}Welcome to Napster 2!!!{% endblock %}
 {% block content %}
-<p>Hello. What would you like to do?</p>
+<p>Hello.</p>
 
+{% if not user.is_authenticated %}
+<p>What would you like to do?</p>
 <a href="/register/">Register</a>
 <a href="/login/">Login</a>
+{% endif %}
+
 {% endblock %}

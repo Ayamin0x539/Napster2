@@ -55,7 +55,20 @@ def update_payment_info(request):
 
 @login_required
 def update_account_info(request):
-    form = AccountManagementForm(request.POST)
+    if request.method == 'POST':
+        form = AccountManagementForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect('/update/success/')
+        else:
+            return render_to_response('update/failure.html')
+    else:
+        form = AccountManagementForm()
+        variables = RequestContext(request, {'form': form})
+        # can pull the variable "form" from the view.
+        return render_to_response('update/update.html', variables,)    
+
+def update_success(request):
+    return render_to_response('update/success.html',)
 
 @login_required
 def enter_new_media(request):
