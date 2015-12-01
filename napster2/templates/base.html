@@ -4,6 +4,20 @@
     <title>Napster2 | {% block title %}{% endblock %}</title>
   </head>
   <body>
+{% if user.is_authenticated %}
+You are currently logged in as {{ user.username }}.<br />
+<a href="/dashboard/">Dashboard</a> | 
+<a href="/manage/">Manage Profile</a> | 
+<a href="/logout/">Logout</a> 
+{% comment %}
+  {% if user is employee: %}
+  employee links
+  {% endif %}
+  {% if user is administrator: %}
+  administrator links
+  {% endif %}
+{% endcomment %}
+{% endif %}
     <h1>{% block head %}{% endblock %}</h1>
     {% block content %}{% endblock %}
   </body>
