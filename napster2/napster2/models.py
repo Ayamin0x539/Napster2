@@ -23,7 +23,7 @@ class Album(models.Model):
 
 
 class Applepay(models.Model):
-    appleinvoiceid = models.ForeignKey('Invoice', db_column='AppleInvoiceID', primary_key=True)  # Field name made lowercase.
+    appleinvoiceid = models.OneToOneField('Invoice', db_column='AppleInvoiceID', primary_key=True)  # Field name made lowercase.
     appleid = models.CharField(db_column='AppleID', max_length=60, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -41,7 +41,7 @@ class Artist(models.Model):
 
 
 class Clips(models.Model):
-    clipstrackid = models.ForeignKey('Track', db_column='ClipsTrackId', primary_key=True)  # Field name made lowercase.
+    clipstrackid = models.OneToOneField('Track', db_column='ClipsTrackId', primary_key=True)  # Field name made lowercase.
     itunesurl = models.CharField(db_column='ItunesURL', max_length=205, blank=True, null=True)  # Field name made lowercase.
     googleurl = models.CharField(db_column='GoogleURL', max_length=205, blank=True, null=True)  # Field name made lowercase.
 
@@ -51,7 +51,7 @@ class Clips(models.Model):
 
 
 class Creditcard(models.Model):
-    ccinvoiceid = models.ForeignKey('Invoice', db_column='CCInvoiceID', primary_key=True)  # Field name made lowercase.
+    ccinvoiceid = models.OneToOneField('Invoice', db_column='CCInvoiceID', primary_key=True)  # Field name made lowercase.
     ccnum = models.CharField(db_column='CCNum', max_length=60, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -92,7 +92,7 @@ class Genre(models.Model):
 
 
 class Google(models.Model):
-    googleinvoiceid = models.ForeignKey('Invoice', db_column='GoogleInvoiceID', primary_key=True)  # Field name made lowercase.
+    googleinvoiceid = models.OneToOneField('Invoice', db_column='GoogleInvoiceID', primary_key=True)  # Field name made lowercase.
     googleid = models.CharField(db_column='GoogleID', max_length=60, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -198,7 +198,7 @@ class Payment(models.Model):
 
 
 class Paypal(models.Model):
-    paypalinvoiceid = models.ForeignKey(Invoice, db_column='PaypalInvoiceID', primary_key=True)  # Field name made lowercase.
+    paypalinvoiceid = models.OneToOneField(Invoice, db_column='PaypalInvoiceID', primary_key=True)  # Field name made lowercase.
     email = models.CharField(db_column='Email', max_length=60, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
