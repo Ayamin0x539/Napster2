@@ -43,6 +43,13 @@ section of CSS embedded directly into the base.html file.
 
 \section{Wednesday, 2 December 2015}
 
-
+As noted in Tuesday's entry, having a global CSS and image resource file proved
+to be surprisingly difficult because of how django sources the present working
+directory. I was able to solve this by moving all of our static resources and
+templates into the napster2 application directory. That way, I did not need to
+navigate out of the application directory to source resources. The only other
+changes required were adding \{\% load staticfiles\%\} to the base.html template
+and correctly using \{\% static 'theme/css/base.css' \%\} to source the base.css
+file.
 
 \end{document}
