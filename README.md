@@ -1,7 +1,7 @@
 # Napster2
 Napster/iTunes/Bandcamp clone for CSE4701: Principles of Databases
 
-# Installation instructions
+# Installation
 This assumes Ubuntu 12.04 LTS or 14.04 LTS. Other platforms have not been
 tested.
 
