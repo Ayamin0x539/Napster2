@@ -22,7 +22,8 @@ sudo python3 setup.py install
 ````
 
 Delete any existing Chinook schemas in MySQL Workbench by right-clicking on the
-schema and choosing
+schema and choosing "Drop Schema." In the dialog window that appears, choose
+"Drop Now."
 
 Click the cylinder with a + to create a new schema in the connected server.
 
