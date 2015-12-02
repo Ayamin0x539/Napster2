@@ -9,6 +9,8 @@ tested.
 sudo apt-get install mysql
 sudo apt-get install mysql-workbench
 sudo apt-get install libmysqlclient-dev
+sudo pip3 install django
+sudo pip3 install mysqlclient
 ````
 Download the most recent version of mysqlclient from
 https://pypi.python.org/pypi/mysqlclient
@@ -47,12 +49,15 @@ python3 manage.py createsuperuser
 
 Follow the prompts and create your new superuser.
 
-Finally, run the server by executing the following:
+# Running
+After installation, simply start the MySQL database, cd into the
+Napster2/napster2 directory (where manage.py is located) and execute the
+following:
 ````
 python3 manage.py runserver <port>
 ````
 
-If the port option is left out, it defaults to 8000.
+If the port number is excluded, the server starts on port 8000.
 
 # Requirements and TODO list
 
