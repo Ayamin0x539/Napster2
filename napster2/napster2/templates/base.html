@@ -1,0 +1,28 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Napster2 | {% block title %}{% endblock %}</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{% static 'theme/css/base.css' %}" rel="stylesheet" media="screen" /> 
+  </head>
+  <body>
+{% if user.is_authenticated %}
+You are currently logged in as {{ user.username }}.<br />
+<a href="/dashboard/">Dashboard</a> | 
+<a href="/manage/">Manage Profile</a> | 
+<a href="/logout/">Logout</a> 
+{% comment %}
+  {% if user is employee: %}
+  employee links
+  {% endif %}
+  {% if user is administrator: %}
+  administrator links
+  {% endif %}
+{% endcomment %}
+{% endif %}
+    <h1>{% block head %}{% endblock %}</h1>
+    {% block content %}{% endblock %}
+  </body>
+</html>
