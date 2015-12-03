@@ -56,7 +56,7 @@ def update_payment_info(request):
 @login_required
 def view_cart(request):
     cart = request.session.get('cart', None)
-    return render_to_response('view_cart.html', { 'user': request.user })
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
 def add_Track_to_cart(request, trackidnum):
@@ -66,7 +66,7 @@ def add_Track_to_cart(request, trackidnum):
     else:
         request.session['cart'] = cart
         cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
-    return render_to_response('dashboard.html', { 'user': request.user })
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
 def remove_from_cart(request, trackid):
@@ -75,11 +75,19 @@ def remove_from_cart(request, trackid):
         del cart[trackid];
     else:
         cart=cart
-    return render_to_response('dashboard.html', { 'user': request.user })
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
 def checkout(request):
-    return render_to_response('checkout.html', { 'user': request.user })
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = Order()
+            order.save()
+            return HttpResponseRedirect('/checkout/success/')
+        else:
+            return render_to_response('checkout/failure.html')
+    return render_to_response('checkout/checkout.html', { 'user': request.user })
     
 @login_required
 def update_account_info(request):
