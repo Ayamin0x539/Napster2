@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^$', views.index),
     url(r'^register/$', views.register),
     url(r'^register/success/$', views.register_success),
-    url(r'^login/$', 'django.contrib.auth.views.login'), 
+    url(r'^login/$', 'django.contrib.auth.views.login'),
     url(r'^dashboard/$', views.dashboard),
     url(r'^manage/$', views.update_account_info),
     url(r'^update/success/$', views.update_success),

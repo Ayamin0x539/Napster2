@@ -88,7 +88,7 @@ def checkout(request):
         else:
             return render_to_response('checkout/failure.html')
     return render_to_response('checkout/checkout.html', { 'user': request.user })
-    
+
 @login_required
 def update_account_info(request):
     if request.method == 'POST':
@@ -152,7 +152,7 @@ def update_account_info(request):
         form = AccountManagementForm()
         variables = RequestContext(request, {'form': form})
         # can pull the variable "form" from the view.
-        return render_to_response('update/update.html', variables,)    
+        return render_to_response('update/update.html', variables,)
 
 def update_success(request):
     return render_to_response('update/success.html',)
