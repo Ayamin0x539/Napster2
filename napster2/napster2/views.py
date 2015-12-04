@@ -93,10 +93,61 @@ def checkout(request):
 def update_account_info(request):
     if request.method == 'POST':
         form = AccountManagementForm(request.POST)
+        for field in form.fields:
+            form.fields[field].required = False
+
         if form.is_valid():
-            return HttpResponseRedirect('/update/success/')
-        else:
-            return render_to_response('update/failure.html')
+            print("Update is valid!")
+            # update the database
+            # first, do a select statement. select * from Person where username = <current session dude's username>
+            person = Person.objects.get(username=request.user.get_username())
+            firstname=form.cleaned_data['firstname']
+            if firstname != "":
+                person.firstname = firstname
+            lastname=form.cleaned_data['lastname']
+            if lastname != "":
+                person.lastname = lastname
+            phone=form.cleaned_data['phone']
+            if phone != "":
+                person.phone = phone
+            email=form.cleaned_data['email']
+            if email != "":
+                person.email = email
+            postalcode=form.cleaned_data['postalcode']
+            if postalcode != "":
+                person.postalcode = postalcode
+            address=form.cleaned_data['address']
+            if address != "":
+                person.address = address
+            city=form.cleaned_data['city']
+            if city != "":
+                person.city = city
+            state=form.cleaned_data['state']
+            if state != "":
+                person.state = state
+            country=form.cleaned_data['country']
+            if country != "":
+                person.country = country
+            fax=form.cleaned_data['fax']
+            if fax != "":
+                person.fax = fax
+            creditcardnumber=form.cleaned_data['creditcardnumber']
+            if creditcardnumber != "":
+                person.creditcardnumber = creditcardnumber
+            paypalemail=form.cleaned_data['paypalemail']
+            if paypalemail != "":
+                person.paypalemail = paypalemail
+            googlepayid=form.cleaned_data['googlepayid']
+            if googlepayid != "":
+                person.googlepayid = googlepayid
+            applepayid=form.cleaned_data['applepayid']
+            if applepayid != "":
+                person.applepayid = applepayid
+            person.save()
+             return HttpResponseRedirect('/update/success/')
+         else:
+             print("update was not valid")
+             return render_to_response('update/failure.html')
     else:
         form = AccountManagementForm()
         variables = RequestContext(request, {'form': form})
