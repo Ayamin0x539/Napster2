@@ -6,9 +6,10 @@ This assumes Ubuntu 12.04 LTS or 14.04 LTS. Other platforms have not been
 tested.
 
 ````
-sudo apt-get install mysql
 sudo apt-get install mysql-workbench
 sudo apt-get install libmysqlclient-dev
+sudo apt-get install python3-pip
+sudo apt-get install mysql-server
 sudo pip3 install django
 sudo pip3 install mysqlclient
 ````
