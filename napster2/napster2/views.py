@@ -27,7 +27,7 @@ def register(request):
                 password=form.cleaned_data['password1'],
                 email=form.cleaned_data['email']
                 )
-            
+
             person = Person(email = form.cleaned_data['email'])
             person.username = form.cleaned_data['username']
             person.affiliation = 'Customer'
@@ -103,20 +103,20 @@ def search(request):
         return render_to_response('search/search.html', variables)
 
 @login_required
-def add_Track_to_cart(request, trackidnum):
-    cart = request.session.get('cart', None)
-    if cart:
-        cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
+def add_track_to_cart(request, trackidnum):
+    track_cart = request.session.get('track_cart', None)
+    if track_cart:
+        track_cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
     else:
         request.session['cart'] = cart
-        cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
+        track_cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
     return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
-def remove_from_cart(request, trackid):
-    cart = request.session.get('cart', None)
-    if cart[trackid]:
-        del cart[trackid];
+def remove_track_from_cart(request, trackid):
+    track_cart = request.session.get('cart', None)
+    if track_cart[trackid]:
+        del track_cart[trackid];
     else:
         cart=cart
     person = None
@@ -126,12 +126,27 @@ def remove_from_cart(request, trackid):
     return render_to_response('checkout/view_cart.html', variables,)
 
 @login_required
-def checkout(request):
-    person = None
-    if request.user.is_authenticated():
-        person = Person.objects.get(username=request.user.get_username())
-    variables = RequestContext(request, {'person': person, 'user': request.user})
+def add_upl_to_cart(request, idnum):
+    upl_cart = request.session.get('upl_cart', None)
+    if upl_cart:
+        upl_cart[trackidnum]= Track.objects.all().filter(MyPlaylistID=idnum);
+    else:
+        request.session['upl_cart'] = upl_cart
+        upl_cart[trackidnum]= Track.objects.all().filter(MyPlaylistID=idnum);
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
+@login_required
+def remove_upl_from_cart(request, idnum):
+    upl_cart = request.session.get('upl_cart', None)
+    if upl_cart[idnum]:
+        del upl_cart[idnum];
+    else:
+        upl_cart=upl_cart
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
+
+
+@login_required
+def checkout(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
@@ -225,6 +240,7 @@ def run_report(request):
 @login_required
 def employee_productivity_Report(request):
     form = AdministratorEmployeeProductivityForm(request.POST)
+
 
 @login_required
 def demographics(request):
