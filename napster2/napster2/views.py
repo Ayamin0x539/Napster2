@@ -144,10 +144,10 @@ def update_account_info(request):
             if applepayid != "":
                 person.applepayid = applepayid
             person.save()
-             return HttpResponseRedirect('/update/success/')
-         else:
-             print("update was not valid")
-             return render_to_response('update/failure.html')
+               return HttpResponseRedirect('/update/success/')
+        else:
+            print("update was not valid")
+            return render_to_response('update/failure.html')
     else:
         form = AccountManagementForm()
         variables = RequestContext(request, {'form': form})
