@@ -48,12 +48,6 @@ def dashboard(request):
     return render_to_response('dashboard.html', { 'user': request.user })
 
 @login_required
-def update_payment_info(request):
-    form = EditPaymentsForm(request.POST)
-#    if form.is_valid():
-    return render_to_response('updatepaymentsuccess.html')
-
-@login_required
 def view_cart(request):
     cart = request.session.get('cart', None)
     return render_to_response('checkout/view_cart.html', { 'user': request.user })
