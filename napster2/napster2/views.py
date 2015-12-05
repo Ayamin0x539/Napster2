@@ -279,7 +279,7 @@ def add_tracks(request):
             variables = RequestContext(request, {'person': person})
             return render_to_response('/music_management/failure.html', variables,)
     else:
-        form = AccountManagementForm()
+        form = AddTrack()
         person = None
         if request.user.is_authenticated():
             person = Person.objects.get(username=request.user.get_username())
