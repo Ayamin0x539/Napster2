@@ -53,6 +53,23 @@ def view_cart(request):
     return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
+def search(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            print("Search form is valid!")
+            filter_param = form.cleaned_data['filter_param']
+            
+            return HttpResponseRedirect('/search/success.html')
+        else:
+            print("Search form fields not valid.")
+            return render_to_response('/search/failure.html')
+    else:
+        form = SearchForm()
+        variables = RequestContext(request, {'form': form})
+        return render_to_response('search/search.html', variables)
+
+@login_required
 def add_Track_to_cart(request, trackidnum):
     cart = request.session.get('cart', None)
     if cart:

@@ -33,6 +33,6 @@ urlpatterns = [
     url(r'^ordermanagement/$', views.manage_orders),
     url(r'^addtracks/$', views.add_tracks),
 #    url(r'^manageplaylist', views.manageplaylist),
-#    url(r'^search', views.search),
+    url(r'^search', views.search),
 #    url(r'^checkout_success', views.checkout_success),
 ]
