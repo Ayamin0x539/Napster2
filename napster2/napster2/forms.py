@@ -24,21 +24,21 @@ class RegistrationForm(forms.Form):
 
 class AccountManagementForm(forms.Form):
 #    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
-    firstname = forms.CharField(label='First Name', max_length=40)
-    lastname = forms.CharField(label='Last Name', max_length=20)
-    phone = forms.CharField(label='Phone Number', max_length=60)
-    email = forms.CharField(label='Email', max_length=30)
-    postalcode = forms.CharField(label='Zip/Postal Code', max_length=10)
-    address = forms.CharField(label='Address', max_length = 70)
-    city = forms.CharField(label='City', max_length=40)
-    state = forms.CharField(label='State', max_length=40)
-    country = forms.CharField(label='Country', max_length=45)
-    fax = forms.CharField(label='Fax', max_length=45)
+    firstname = forms.CharField(label='First Name', max_length=40, required=False)
+    lastname = forms.CharField(label='Last Name', max_length=20, required=False)
+    phone = forms.CharField(label='Phone Number', max_length=60, required=False)
+    email = forms.CharField(label='Email', max_length=30, required=False)
+    postalcode = forms.CharField(label='Zip/Postal Code', max_length=10, required=False)
+    address = forms.CharField(label='Address', max_length = 70, required=False)
+    city = forms.CharField(label='City', max_length=40, required=False)
+    state = forms.CharField(label='State', max_length=40, required=False)
+    country = forms.CharField(label='Country', max_length=45, required=False)
+    fax = forms.CharField(label='Fax', max_length=45, required=False)
     # payment info
-    creditcardnumber = forms.CharField(label='Credit Card Number', max_length=16)
-    paypalemail = forms.CharField(label='Paypal Email', max_length=30)
-    googlepayid = forms.CharField(label='GooglePay ID', max_length=30)
-    applepayid = forms.CharField(label='AppleID (ApplePay)', max_length=30)
+    creditcardnumber = forms.CharField(label='Credit Card Number', max_length=16, required=False)
+    paypalemail = forms.CharField(label='Paypal Email', max_length=30, required=False)
+    googlepayid = forms.CharField(label='GooglePay ID', max_length=30, required=False)
+    applepayid = forms.CharField(label='AppleID (ApplePay)', max_length=30, required=False)
 
 class EditPaymentsForm(forms.Form):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
@@ -57,3 +57,6 @@ class OrderForm(forms.Form):
     customerid = forms.IntegerField()
     playlistmadby = forms.CharField()
     price = forms.CharField()
+
+class AddTrack(forms.Form):
+    trackname = forms.CharField(label='Track Name', max_length=40, required=True)

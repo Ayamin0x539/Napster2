@@ -93,9 +93,6 @@ def checkout(request):
 def update_account_info(request):
     if request.method == 'POST':
         form = AccountManagementForm(request.POST)
-        for field in form.fields:
-            form.fields[field].required = False
-
         if form.is_valid():
             print("Update is valid!")
             # update the database
@@ -175,3 +172,25 @@ def demographics(request):
     customer_numbers = Person.objects.all().count()
     customer_country_numbers = Person.objects.values('country').distinct().count()
     return render_to_response('demographics/demographics.html', { 'user': request.user, 'customer_numbers': customer_numbers, 'customer_country_numbers': customer_country_numbers, })
+
+@login_required
+def manage_orders(request):
+    return render_to_response('orders/employee_order_management.html')
+
+@login_required
+def add_tracks(request):
+        if request.method == 'POST':
+        form = AddTrack(request.POST)
+        if form.is_valid():
+            print("Update is valid!")
+            track.trackname = form.cleaned_data['trackname']
+            track.save()
+            print("Update was successful.")
+            return HttpResponseRedirect('/music_management/success.html')
+        else:
+            print("Update was not valid.")
+            return render_to_response('/music_management/failure.html')
+    else:
+        form = AccountManagementForm()
+        variables = RequestContext(request, {'form': form})
+        return render_to_response('music_management/add_tracks.html', variables)
