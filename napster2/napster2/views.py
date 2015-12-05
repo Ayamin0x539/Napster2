@@ -49,7 +49,7 @@ def dashboard(request):
 
 @login_required
 def view_cart(request):
-    cart = request.session.get('cart', None)
+    track_cart = request.session.get('track_cart', None)
     return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
@@ -70,23 +70,43 @@ def search(request):
         return render_to_response('search/search.html', variables)
 
 @login_required
-def add_Track_to_cart(request, trackidnum):
-    cart = request.session.get('cart', None)
-    if cart:
-        cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
+def add_track_to_cart(request, trackidnum):
+    track_cart = request.session.get('track_cart', None)
+    if track_cart:
+        track_cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
     else:
         request.session['cart'] = cart
-        cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
+        track_cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
     return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
-def remove_from_cart(request, trackid):
-    cart = request.session.get('cart', None)
-    if cart[trackid]:
-        del cart[trackid];
+def remove_track_from_cart(request, trackid):
+    track_cart = request.session.get('cart', None)
+    if track_cart[trackid]:
+        del track_cart[trackid];
     else:
-        cart=cart
+        track_cart=track_cart
     return render_to_response('checkout/view_cart.html', { 'user': request.user })
+
+@login_required
+def add_upl_to_cart(request, idnum):
+    upl_cart = request.session.get('upl_cart', None)
+    if upl_cart:
+        upl_cart[trackidnum]= Track.objects.all().filter(MyPlaylistID=idnum);
+    else:
+        request.session['upl_cart'] = upl_cart
+        upl_cart[trackidnum]= Track.objects.all().filter(MyPlaylistID=idnum);
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
+
+@login_required
+def remove_upl_from_cart(request, idnum):
+    upl_cart = request.session.get('upl_cart', None)
+    if upl_cart[idnum]:
+        del upl_cart[idnum];
+    else:
+        upl_cart=upl_cart
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
+
 
 @login_required
 def checkout(request):
