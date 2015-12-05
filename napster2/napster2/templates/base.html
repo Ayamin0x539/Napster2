@@ -9,22 +9,21 @@
   </head>
   <body>
 {% if user.is_authenticated %}
-You are currently logged in as {{ user.username }}.<br />
-<a href="/dashboard/">Dashboard</a> | 
-<a href="/manage/">Manage Profile</a> | 
-<a href="/logout/">Logout</a> |
-<a href="/view_cart/">View Cart</a> | 
-{% comment %}
-  {% if user is employee: %}
-  employee links
-  <a href="/demographics/">Demographics</a> | 
-  <a href="/ordermanagement/">Order Management</a> | 
-  <a href="/addtracks/">Add Tracks</a> | 
-  {% endif %}
-  {% if user is administrator: %}
-  administrator links
-  {% endif %}
-{% endcomment %}
+    You are currently logged in as {{ user.username }}.<br />
+    Your affiliation is {{ person.group }}. <br />
+    <a href="/dashboard/">Dashboard</a> | 
+    <a href="/manage/">Manage Profile</a> | 
+    <a href="/logout/">Logout</a> |
+    <a href="/view_cart/">View Cart</a> | 
+    {% if person.group == "Employee" %}
+    <a href="/demographics/">Demographics</a> | 
+    <a href="/ordermanagement/">Order Management</a> | 
+    <a href="/addtracks/">Add Tracks</a> | 
+    {% endif %}
+    {% if person.group == "Administrator"  %}
+    administrator links
+    {% endif %}
+
 {% endif %}
     <h1>{% block head %}{% endblock %}</h1>
     {% block content %}{% endblock %}

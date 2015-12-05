@@ -12,7 +12,11 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 def index(request): # request parameter has host params (ip, etc)
-    return render_to_response('index.html', {}, RequestContext(request))
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('index.html', variables,)
 
 def register(request):
     if request.method == 'POST':
@@ -25,18 +29,32 @@ def register(request):
                 )
 
             person = Person(email = form.cleaned_data['email'])
+            person.username = form.cleaned_data['username']
+            person.group = 'Customer'
             person.save()
 
             return HttpResponseRedirect('/register/success/')
         else:
-            return render_to_response('registration/failure.html')
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
+            return render_to_response('registration/failure.html', variables,)
     else:
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'person': person})
         form = RegistrationForm()
         variables = RequestContext(request, {'form': form})
         # can pull the variable "form" from the view.
         return render_to_response('registration/register.html', variables,)
 
 def register_success(request):
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
     return render_to_response('registration/success.html',)
 
 def logout_page(request):
@@ -45,11 +63,19 @@ def logout_page(request):
 
 @login_required
 def dashboard(request):
-    return render_to_response('dashboard.html', { 'user': request.user })
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person, 'user': request.user})
+    return render_to_response('dashboard.html', variables,)
 
 @login_required
 def view_cart(request):
-    track_cart = request.session.get('track_cart', None)
+    cart = request.session.get('cart', None)
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
     return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
@@ -63,10 +89,17 @@ def search(request):
             return HttpResponseRedirect('/search/success.html')
         else:
             print("Search form fields not valid.")
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
             return render_to_response('/search/failure.html')
     else:
         form = SearchForm()
-        variables = RequestContext(request, {'form': form})
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'form': form, 'person': person})
         return render_to_response('search/search.html', variables)
 
 @login_required
@@ -85,8 +118,12 @@ def remove_track_from_cart(request, trackid):
     if track_cart[trackid]:
         del track_cart[trackid];
     else:
-        track_cart=track_cart
-    return render_to_response('checkout/view_cart.html', { 'user': request.user })
+        cart=cart
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person, 'user': request.user})
+    return render_to_response('checkout/view_cart.html', variables,)
 
 @login_required
 def add_upl_to_cart(request, idnum):
@@ -117,8 +154,8 @@ def checkout(request):
             order.save()
             return HttpResponseRedirect('/checkout/success/')
         else:
-            return render_to_response('checkout/failure.html')
-    return render_to_response('checkout/checkout.html', { 'user': request.user })
+            return render_to_response('checkout/failure.html', variables,)
+    return render_to_response('checkout/checkout.html', variables,)
 
 @login_required
 def update_account_info(request):
@@ -175,19 +212,26 @@ def update_account_info(request):
             return HttpResponseRedirect('/update/success/')
         else:
             print("update was not valid")
-            return render_to_response('update/failure.html')
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
+            return render_to_response('update/failure.html', variables)
     else:
         form = AccountManagementForm()
-        variables = RequestContext(request, {'form': form})
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'form': form, 'person': person})
         # can pull the variable "form" from the view.
         return render_to_response('update/update.html', variables,)
 
 def update_success(request):
-    return render_to_response('update/success.html',)
-
-@login_required
-def enter_new_media(request):
-    form = EmployeeEnterNewMediaForm(request.POST)
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('update/success.html', variables,)
 
 @login_required
 def run_report(request):
@@ -206,7 +250,11 @@ def demographics(request):
 
 @login_required
 def manage_orders(request):
-    return render_to_response('orders/employee_order_management.html')
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('orders/employee_order_management.html', variables,)
 
 @login_required
 def add_tracks(request):
@@ -220,8 +268,15 @@ def add_tracks(request):
             return HttpResponseRedirect('/music_management/success.html')
         else:
             print("Update was not valid.")
-            return render_to_response('/music_management/failure.html')
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
+            return render_to_response('/music_management/failure.html', variables,)
     else:
         form = AccountManagementForm()
-        variables = RequestContext(request, {'form': form})
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'form': form, 'person': person})
         return render_to_response('music_management/add_tracks.html', variables)
