@@ -8,7 +8,7 @@
         <link href="{% static 'theme/css/base.css' %}" rel="stylesheet" media="screen" /> 
   </head>
   <body>
-{% if user.is_authenticated %}
+{% if person !=  None and user.is_authenticated %}
     You are currently logged in as {{ user.username }}.<br />
     Your affiliation is {{ person.group }}. <br />
     <a href="/dashboard/">Dashboard</a> | 
