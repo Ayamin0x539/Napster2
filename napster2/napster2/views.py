@@ -179,7 +179,7 @@ def manage_orders(request):
 
 @login_required
 def add_tracks(request):
-        if request.method == 'POST':
+    if request.method == 'POST':
         form = AddTrack(request.POST)
         if form.is_valid():
             print("Update is valid!")
