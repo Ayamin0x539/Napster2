@@ -30,7 +30,7 @@ def register(request):
 
             person = Person(email = form.cleaned_data['email'])
             person.username = form.cleaned_data['username']
-            person.group = 'Customer'
+            person.affiliation = 'Customer'
             person.save()
 
             return HttpResponseRedirect('/register/success/')

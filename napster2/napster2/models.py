@@ -209,7 +209,7 @@ class Paypal(models.Model):
 class Person(models.Model):
     personid = models.AutoField(db_column='PersonID', primary_key=True)  # Field name made lowercase.
     username = models.CharField(db_column='Username', max_length=30, blank=True, null=True) # This is technically also a primary key... shhhh...
-    group = models.CharField(db_column='Group', max_length=15, blank=True, null=True) # Customer, Employee, Administrator (also Employee)
+    affiliation = models.CharField(db_column='Affiliation', max_length=15, blank=True, null=True) # Customer, Employee, Administrator (also Employee)
     lastname = models.CharField(db_column='LastName', max_length=20, blank=True, null=True)  # Field name made lowercase.
     firstname = models.CharField(db_column='FirstName', max_length=40, blank=True, null=True)  # Field name made lowercase.
     postalcode = models.CharField(db_column='PostalCode', max_length=10, blank=True, null=True)  # Field name made lowercase.

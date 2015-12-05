@@ -8,19 +8,19 @@
         <link href="{% static 'theme/css/base.css' %}" rel="stylesheet" media="screen" /> 
   </head>
   <body>
-{% if user.is_authenticated %}
+{% if person !=  None and user.is_authenticated %}
     You are currently logged in as {{ user.username }}.<br />
     Your affiliation is {{ person.group }}. <br />
     <a href="/dashboard/">Dashboard</a> | 
     <a href="/manage/">Manage Profile</a> | 
     <a href="/logout/">Logout</a> |
     <a href="/view_cart/">View Cart</a> | 
-    {% if person.group == "Employee" %}
+    {% if person.affiliation == "Employee" %}
     <a href="/demographics/">Demographics</a> | 
     <a href="/ordermanagement/">Order Management</a> | 
     <a href="/addtracks/">Add Tracks</a> | 
     {% endif %}
-    {% if person.group == "Administrator"  %}
+    {% if person.affiliation == "Administrator"  %}
     administrator links
     {% endif %}
 
