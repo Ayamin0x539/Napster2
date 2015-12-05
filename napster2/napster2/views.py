@@ -182,7 +182,7 @@ def employee_productivity_Report(request):
 def demographics(request):
     customer_numbers = Person.objects.all().count()
     customer_country_numbers = Person.objects.values('country').distinct().count()
-    return render_to_response('demographics/demographics.html', { 'user': request.user, 'customer_numbers': customer_numbers, 'customer_country_numbers': customer_country_numbers, })
+    return render_to_response('demographics/demographics.html', locals())
 
 @login_required
 def manage_orders(request):
