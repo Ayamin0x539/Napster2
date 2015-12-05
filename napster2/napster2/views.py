@@ -230,6 +230,11 @@ def employee_productivity_Report(request):
 def demographics(request):
     customer_numbers = Person.objects.all().count()
     customer_country_numbers = Person.objects.values('country').distinct().count()
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+#    variables = RequestContext(request, {'person': person})
+    user = request.user
     return render_to_response('demographics/demographics.html', locals())
 
 @login_required
