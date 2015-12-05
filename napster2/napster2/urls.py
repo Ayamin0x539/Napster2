@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^view_cart/$', views.view_cart),
     url(r'^checkout/$', views.checkout),
     url(r'^demographics/$', views.demographics),
-    url(r'^ordermanagement/$', views.orders),
+    url(r'^ordermanagement/$', views.manage_orders),
     url(r'^addtracks/$', view.add_tracks),
 #    url(r'^manageplaylist', views.manageplaylist),
 #    url(r'^search', views.search),
