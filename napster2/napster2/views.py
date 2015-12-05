@@ -84,8 +84,8 @@ def search(request):
         form = SearchForm(request.POST)
         if form.is_valid():
             print("Search form is valid!")
-            filter_param = form.cleaned_data['filter_param']
-            
+            search_filter = form.cleaned_data['search_filter']
+            search_query = form.cleaned_data['search_query']
             return HttpResponseRedirect('/search/success.html')
         else:
             print("Search form fields not valid.")
