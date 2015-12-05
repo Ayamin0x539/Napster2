@@ -120,7 +120,7 @@ def remove_track_from_cart(request, trackid):
     if track_cart[trackid]:
         del track_cart[trackid];
     else:
-        cart=cart
+        track_cart=track_cart
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
