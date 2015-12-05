@@ -144,7 +144,7 @@ def update_account_info(request):
             if applepayid != "":
                 person.applepayid = applepayid
             person.save()
-                return HttpResponseRedirect('/update/success/')
+            return HttpResponseRedirect('/update/success/')
         else:
             print("update was not valid")
             return render_to_response('update/failure.html')
