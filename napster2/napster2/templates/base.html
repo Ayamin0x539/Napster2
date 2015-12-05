@@ -10,7 +10,7 @@
   <body>
 {% if person !=  None and user.is_authenticated %}
     You are currently logged in as {{ user.username }}.<br />
-    Your affiliation is {{ person.group }}. <br />
+    Your affiliation is {{ person.affiliation }}. <br />
     <a href="/dashboard/">Dashboard</a> | 
     <a href="/manage/">Manage Profile</a> | 
     <a href="/logout/">Logout</a> |
