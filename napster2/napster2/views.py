@@ -71,7 +71,9 @@ def dashboard(request):
 
 @login_required
 def view_cart(request):
-    cart = request.session.get('cart', None)
+    track_cart = request.session.get('track_cart', None)
+    upl_cart = request.session.get('upl_cart', None)
+    epl_cart = request.session.get('epl_cart', None)
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
@@ -118,7 +120,7 @@ def remove_track_from_cart(request, trackid):
     if track_cart[trackid]:
         del track_cart[trackid];
     else:
-        cart=cart
+        track_cart=track_cart
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
@@ -142,6 +144,25 @@ def remove_upl_from_cart(request, idnum):
         del upl_cart[idnum];
     else:
         upl_cart=upl_cart
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
+
+@login_required
+def add_epl_to_cart(request, idnum):
+    epl_cart = request.session.get('epl_cart', None)
+    if epl_cart:
+        epl_cart[trackidnum]= Track.objects.all().filter(PlaylistID=idnum);
+    else:
+        request.session['epl_cart'] = epl_cart
+        epl_cart[trackidnum]= Track.objects.all().filter(PlaylistID=idnum);
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
+
+@login_required
+def remove_upl_from_cart(request, idnum):
+    epl_cart = request.session.get('upl_cart', None)
+    if epl_cart[idnum]:
+        del epl_cart[idnum];
+    else:
+        epl_cart=epl_cart
     return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 
