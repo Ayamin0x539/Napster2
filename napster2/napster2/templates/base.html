@@ -17,6 +17,9 @@ You are currently logged in as {{ user.username }}.<br />
 {% comment %}
   {% if user is employee: %}
   employee links
+  <a href="/demographics/">Demographics</a> | 
+  <a href="/ordermanagement/">Order Management</a> | 
+  <a href="/addtracks/">Add Tracks</a> | 
   {% endif %}
   {% if user is administrator: %}
   administrator links
