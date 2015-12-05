@@ -5,11 +5,11 @@
 
 <p>You are currently logged in as {{ user.username }}. This is the employee order management view.</p>
 
-<form method="post" action=".">
+<form method="post" action=".">{% csrf_token %}
   <table border="0">
     {{ form.as_table }}
   </table>
-  <input type="submit" value="Update" />
+  <input type="submit" value="Add" />
 </form>
 
 {% endblock %}
