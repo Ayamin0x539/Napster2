@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Napster 2 Demographics{% endblock %}
+{% block head %}Demographics{% endblock %}
+{% block content %}
+
+<p>You are currently logged in as {{ user.username }}. This is the employee demographics view.</p>
+
+<p>
+  Group: We need a way to tell whether we're a customer, employee, or admin.
+</p>
+
+<p>
+We currently serve {{ customer_numbers }} customers in {{ customer_country_numbers }} different countries.
+</p>
+
+{% endblock %}
