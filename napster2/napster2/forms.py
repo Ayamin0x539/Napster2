@@ -65,3 +65,11 @@ class AddTrack(forms.Form):
     composer = forms.CharField(label='Composer', max_length=40, required=True)
     length = forms.IntegerField(label='Length ms', required=True)
     size = forms.IntegerField(label='Size',  required=True)
+
+class SearchForm(forms.Form):
+    track = forms.CharField(label='Track Name', max_length=40, required=False)
+    album = forms.CharField(label='Album Name', max_length=40, required=False)
+    artist = forms.CharField(label='Artist Name', max_length=40, required=False)
+    composer = forms.CharField(label='Composer', max_length=40, required=False)
+    genre = forms.CharField(label='Genre', max_length=40, required=False)
+    media = forms.CharField(label='Media', max_length=10, required=False)
