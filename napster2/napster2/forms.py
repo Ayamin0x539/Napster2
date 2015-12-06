@@ -62,7 +62,6 @@ class AddTrack(forms.Form):
     trackname = forms.CharField(label='Track Name', max_length=40, required=True)
     albumname = forms.CharField(label='Album', max_length=40, required=True)
     mediatype = forms.CharField(label='Media Type', max_length=40, required=True)
-    composer  = forms.CharField(label='Composer', max_length=40, required=True)
-    length    = forms.IntegerField(label='Length in Milliseconds', max_length=40, required=True)
-    size      = forms.IntegerField(label='Size in bytes', max_length=40, required=True)
-    
+    composer = forms.CharField(label='Composer', max_length=40, required=True)
+    length = forms.IntegerField(label='Length ms', required=True)
+    size = forms.IntegerField(label='Size',  required=True)
