@@ -1,9 +1,20 @@
 {% extends "base.html" %}
-{% block title %}Napster 2 Dashboard{% endblock %}
+{% block title %}Search{% endblock %}
 {% block head %}Search{% endblock %}
 {% block content %}
 
-
+<form method="post" action=".">{% csrf_token %}
+  <table border="0">
+    {{ form.as_table }}
+  </table>
 <input type="submit" value="Search" />
+</form>
+
+{% if result != None %}
+  Search results: <br />
+  {% for track in result %}
+   {{ track.name }} <br />
+  {% endfor %}
+{% endif %}
 
 {% endblock %}

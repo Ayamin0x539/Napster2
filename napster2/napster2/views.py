@@ -86,16 +86,30 @@ def search(request):
         form = SearchForm(request.POST)
         if form.is_valid():
             print("Search form is valid!")
-            search_filter = form.cleaned_data['search_filter']
-            search_query = form.cleaned_data['search_query']
-            return HttpResponseRedirect('/search/success.html')
+            result = None
+            trackname = form.cleaned_data['track']
+            albumname = form.cleaned_data['album']
+            artistname = form.cleaned_data['artist']
+            composername = form.cleaned_data['composer']
+            genrename = form.cleaned_data['genre']
+            medianame = form.cleaned_data['media']
+            
+            query = "SELECT * from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
+
+            result = Track.objects.raw(query)
+
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'result': result, 'person': person})
+            return render_to_response('search/search.html', variables,)
         else:
             print("Search form fields not valid.")
             person = None
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
             variables = RequestContext(request, {'person': person})
-            return render_to_response('/search/failure.html')
+            return render_to_response('/search/failure.html', variables,)
     else:
         form = SearchForm()
         person = None

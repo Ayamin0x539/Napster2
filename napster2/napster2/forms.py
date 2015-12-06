@@ -52,11 +52,13 @@ class AdministratorRunReportForm(forms.Form):
 class AdministratorEmployeeProductivityForm(forms.Form):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
 
-class OrderForm(forms.Form):
-    orderid = forms.IntegerField()
-    customerid = forms.IntegerField()
-    playlistmadby = forms.CharField()
-    price = forms.CharField()
-
 class AddTrack(forms.Form):
     trackname = forms.CharField(label='Track Name', max_length=40, required=True)
+
+class SearchForm(forms.Form):
+    track = forms.CharField(label='Track Name', max_length=40, required=False)
+    album = forms.CharField(label='Album Name', max_length=40, required=False)
+    artist = forms.CharField(label='Artist Name', max_length=40, required=False)
+    composer = forms.CharField(label='Composer', max_length=40, required=False)
+    genre = forms.CharField(label='Genre', max_length=40, required=False)
+    media = forms.CharField(label='Media', max_length=10, required=False)
