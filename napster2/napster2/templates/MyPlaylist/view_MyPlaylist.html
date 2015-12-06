@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}My Playlists{% endblock %}
+{% block head %}My Playlists{% endblock %}
+{% block content %}
+</br>
+
+{% if result != None %}
+  My Playlists: <br />
+  {% for track in result %}
+   {{ track.name }} <br />
+  {% endfor %}
+{% endif %}
+
+{% endblock %}
