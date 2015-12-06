@@ -11,9 +11,18 @@
 </form>
 
 {% if result != None %}
-  Search results: <br />
+<hr> 
+ <b> Search results:</b><br />
+<hr> <br />
+  <table border="0">
   {% for track in result %}
-   {{ track.name }} <br />
+   <tr><th>
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_trackid" value="{{ track.trackid }}" name="trackid" type="number" size="5" readonly /> : <input id="id_item" maxlength="40" value="{{ track.name }}" name="item" type="text" readonly />
+    <input type="submit" value="Add To Cart">
+    </form>
+   </td></tr>
+
   {% endfor %}
 {% endif %}
 
