@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^addtracks/$', views.add_tracks),
 #    url(r'^manageplaylist', views.manageplaylist),
     url(r'^search/$', views.search),
+    url(r'^search_playlists/$', views.search_playlists),
 #    url(r'^view_MyPlaylist/$', views.view_MyPlaylist),
 #    url(r'^checkout_success', views.checkout_success),
 ]

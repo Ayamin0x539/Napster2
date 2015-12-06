@@ -162,12 +162,30 @@ def remove_track_from_cart(request, trackid):
 @login_required
 def add_upl_to_cart(request, idnum):
     upl_cart = request.session.get('upl_cart', None)
+    upl_obj = Myplaylist.objects.get(myplaylistid=idnum)
+    tracks_in_playlist = Myplaylisttracks.objects.get(playlistid=idnum)
+    #for testing
+    for tracks in tracks_in_playlist:
+        print(tracks.name)
+
+    data = (idnum, upl_obj.name, "Derp")
+    print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
+
     if upl_cart:
-        upl_cart[trackidnum]= Track.objects.get(MyPlaylistID=idnum)
+        print("CART NOT EMPTY")
+        upl_cart.append(data)
     else:
-        request.session['upl_cart'] = upl_cart
-        upl_cart[trackidnum]= Track.objects.get(MyPlaylistID=idnum)
+        print("CART EMPTY")
+        request.session['upl_cart'] = list()
+        upl_cart = request.session.get('upl_cart', None)
+        upl_cart.append(data)
+
+    request.session.modified = True
+    print("Cart contains:")
+    for item in upl_cart:
+        print(item)
     return view_cart(request)
+
 
 @login_required
 def remove_upl_from_cart(request, idnum):
@@ -187,11 +205,56 @@ def add_epl_to_cart(request, idnum):
     return view_cart(request)
 
 @login_required
-def remove_upl_from_cart(request, idnum):
+def remove_epl_from_cart(request, idnum):
     epl_cart = request.session.get('upl_cart', None)
     if epl_cart[idnum]:
         del epl_cart[idnum]
     return view_cart(request)
+
+@login_required
+def search_playlists(request):
+    if request.method == 'POST' and 'track' in request.POST:
+        # We have a received a search.
+        form = PlaylistSearchForm(request.POST)
+        if form.is_valid():
+            print("Search form is valid!")
+            result = None
+            playlistname = form.cleaned_data['name']
+            trackname = form.cleaned_data['track']
+            artistname = form.cleaned_data['artist']
+            genrename = form.cleaned_data['genre']
+            
+            query = "SELECT Playlist.PlaylistId, Playlist.Name from Track, Album, Playlist, Artist, PlaylistTrack, Genre where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.TrackId = PlaylistTrack.TrackId and Playlist.PlaylistId = PlaylistTrack.PlaylistId and Track.Name like \"%%" + trackname + "%%\" and Playlist.Name like \"%%" + playlistname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Genre.Name like \"%%" + genrename + "%%\" group by Name"
+
+            result = Playlist.objects.raw(query)
+            for playlist in result:
+                print(playlist.name)
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            # make a new form for the next search
+            form = PlaylistSearchForm()
+            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
+            return render_to_response('search/search_playlists.html', variables,)
+        else:
+            print("Search form fields not valid.")
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
+            return render_to_response('/search/failure.html', variables,)
+    elif request.method == 'POST' and 'playlist' in request.POST:
+        playlist_name = request.POST['playlist']
+        print("You are trying to add the item " + playlist_name + " to the cart!")
+        playlistid = request.POST['playlistid']
+        return add_epl_to_cart(request, playlistid)
+    else:
+        form = PlaylistSearchForm()
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'form': form, 'person': person})
+        return render_to_response('search/search_playlists.html', variables)
 
 
 @login_required
