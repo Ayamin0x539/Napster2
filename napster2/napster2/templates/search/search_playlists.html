@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Search Playlists{% endblock %}
+{% block head %}Search Playlists{% endblock %}
+{% block content %}
+
+<form method="post" action=".">{% csrf_token %}
+  <table border="0">
+    {{ form.as_table }}
+  </table>
+<input type="submit" value="Search" />
+</form>
+
+{% if result != None %}
+<hr> 
+ <b> Search results:</b><br />
+<hr> <br />
+  <table border="0">
+  {% for playlist in result %}
+   <tr><th>
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_playlistid" value="{{ playlist.playlistid }}" name="playlistid" type="number" style="width:60px" readonly /> 
+    <input id="id_playlist" maxlength="40" value="{{ playlist.name }}" name="playlist" type="text" style="width:300px" readonly />
+    <input type="submit" value="Add To Cart">
+    <p>View Details?</p>
+    </form>
+   </td></tr>
+
+  {% endfor %}
+{% endif %}
+
+{% endblock %}
