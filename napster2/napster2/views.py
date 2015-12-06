@@ -77,13 +77,12 @@ def view_cart(request):
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
-    variables = RequestContext(request, {'person': person, 'user': request.user, 'track_cart': track_cart, 'upl_cart': upl_cart, 'epl_cart': epl_cart})
-    return render_to_response('checkout/view_cart.html', variables,)
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
 def search(request):
-    if request.method == 'POST' and 'track' in request.POST:
-        # We have a received a search.
+    if request.method == 'POST':
         form = SearchForm(request.POST)
         if form.is_valid():
             print("Search form is valid!")
@@ -113,11 +112,6 @@ def search(request):
                 person = Person.objects.get(username=request.user.get_username())
             variables = RequestContext(request, {'person': person})
             return render_to_response('/search/failure.html', variables,)
-    elif request.method == 'POST' and 'item' in request.POST:
-        item_name = request.POST['item']
-        print("You are trying to add the item " + item_name + " to the cart!")
-        trackid = request.POST['trackid']
-        return add_track_to_cart(request, trackid)
     else:
         form = SearchForm()
         person = None
@@ -129,69 +123,63 @@ def search(request):
 @login_required
 def add_track_to_cart(request, trackidnum):
     track_cart = request.session.get('track_cart', None)
-    track_obj = Track.objects.get(trackid=trackidnum)
-    data = [track_obj.name, str(track_obj.unitprice)]
-    print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
-
     if track_cart:
-        print("CART NOT EMPTY")
-        track_cart[trackidnum] = data
+        track_cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
     else:
-        print("CART EMPTY")
-        request.session['track_cart'] = {}
-        track_cart = request.session.get('track_cart', None)
-        track_cart[trackidnum] = data
-
-    request.session.modified = True
-    print("Cart contains:")
-    for item in track_cart:
-        print("ID: " + item)
-    return view_cart(request)
-
+        request.session['cart'] = cart
+        track_cart[trackidnum]= Track.objects.all().filter(trackid=trackidnum);
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
 def remove_track_from_cart(request, trackid):
-    track_cart = request.session.get('track_cart', None)
+    track_cart = request.session.get('cart', None)
     if track_cart[trackid]:
-        del track_cart[trackid]
+        del track_cart[trackid];
     else:
         track_cart=track_cart
-
-    return view_cart(request)
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person, 'user': request.user})
+    return render_to_response('checkout/view_cart.html', variables,)
 
 @login_required
 def add_upl_to_cart(request, idnum):
     upl_cart = request.session.get('upl_cart', None)
     if upl_cart:
-        upl_cart[trackidnum]= Track.objects.get(MyPlaylistID=idnum)
+        upl_cart[trackidnum]= Track.objects.all().filter(MyPlaylistID=idnum);
     else:
         request.session['upl_cart'] = upl_cart
-        upl_cart[trackidnum]= Track.objects.get(MyPlaylistID=idnum)
-    return view_cart(request)
+        upl_cart[trackidnum]= Track.objects.all().filter(MyPlaylistID=idnum);
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
 def remove_upl_from_cart(request, idnum):
     upl_cart = request.session.get('upl_cart', None)
     if upl_cart[idnum]:
-        del upl_cart[idnum]
-    return view_cart(request)
+        del upl_cart[idnum];
+    else:
+        upl_cart=upl_cart
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
 def add_epl_to_cart(request, idnum):
     epl_cart = request.session.get('epl_cart', None)
     if epl_cart:
-        epl_cart[trackidnum]= Track.objects.get(PlaylistID=idnum)
+        epl_cart[trackidnum]= Track.objects.all().filter(PlaylistID=idnum);
     else:
-        request.session['epl_cart'] = {}
-        epl_cart[trackidnum]= Track.objects.get(PlaylistID=idnum)
-    return view_cart(request)
+        request.session['epl_cart'] = epl_cart
+        epl_cart[trackidnum]= Track.objects.all().filter(PlaylistID=idnum);
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 @login_required
 def remove_upl_from_cart(request, idnum):
     epl_cart = request.session.get('upl_cart', None)
     if epl_cart[idnum]:
-        del epl_cart[idnum]
-    return view_cart(request)
+        del epl_cart[idnum];
+    else:
+        epl_cart=epl_cart
+    return render_to_response('checkout/view_cart.html', { 'user': request.user })
 
 
 @login_required
@@ -346,6 +334,6 @@ def view_MyPlaylist(request):
         variables = RequestContext(request, {'result': result, 'person': person})
     return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
        
-
+       
 
 
