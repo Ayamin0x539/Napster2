@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block head %}Search{% endblock %}
+{% block content %}
+
+
+{% if result != None %}
+  My Playlists: <br />
+  {% for track in result %}
+   {{ track.name }} <br />
+  {% endfor %}
+{% endif %}
+
+{% endblock %}

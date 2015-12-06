@@ -322,3 +322,18 @@ def add_tracks(request):
             person = Person.objects.get(username=request.user.get_username())
         variables = RequestContext(request, {'form': form, 'person': person})
         return render_to_response('music_management/add_tracks.html', variables)
+
+@login_required
+def view_MyPlaylist(request):
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+        person_id = person.personid
+    query = "SELECT * from Customer, MyPlaylist where Customer.CustPersonId = \"%%" + str(person_id) + "%%\"  and Customer.CustomerId = MyPlaylist.CustomerID"
+    result = Myplaylist.objects.raw(query)
+    if request.user.is_authenticated():
+        variables = RequestContext(request, {'result': result, 'person': person})
+    return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
+       
+
+
+
