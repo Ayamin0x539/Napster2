@@ -73,3 +73,10 @@ class SearchForm(forms.Form):
     composer = forms.CharField(label='Composer', max_length=40, required=False)
     genre = forms.CharField(label='Genre', max_length=40, required=False)
     media = forms.CharField(label='Media', max_length=10, required=False)
+
+class PlaylistSearchForm(forms.Form):
+    name = forms.CharField(label='Playlist Name', max_length=40, required=False)
+    track = forms.CharField(label='Tracks', max_length=40, required=False)
+    artist = forms.CharField(label='Artist Name', max_length=40, required=False)
+    genre = forms.CharField(label='Genre', max_length=40, required=False)
+        
