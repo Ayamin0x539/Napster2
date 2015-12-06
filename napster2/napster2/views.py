@@ -101,7 +101,9 @@ def search(request):
             person = None
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
-            variables = RequestContext(request, {'result': result, 'person': person})
+            # make a new form for the next search
+            form = SearchForm()
+            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
             return render_to_response('search/search.html', variables,)
         else:
             print("Search form fields not valid.")
