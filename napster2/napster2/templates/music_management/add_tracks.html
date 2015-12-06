@@ -5,6 +5,10 @@
 
 <p>You are currently logged in as {{ user.username }}. This is the employee music management view.</p>
 
+<p>
+DEBUG: {{ checkname }}
+</p>
+
 <form method="post" action=".">{% csrf_token %}
   <table border="0">
     {{ form.as_table }}

@@ -316,8 +316,20 @@ def add_tracks(request):
         form = AddTrack(request.POST)
         if form.is_valid():
             print("Update is valid!")
-            track.trackname = form.cleaned_data['trackname']
-            track.save()
+            # Get the information from the form
+            trackname = form.cleaned_data['trackname']
+            albumname = form.cleaned_data['albumname']
+            genre     = form.cleaned_data['genre']
+            mediatype = form.cleaned_data['mediatype']
+            composer  = form.cleaned_data['composer']
+            length    = form.cleaned_data['length']
+            size      = form.cleaned_data['size']
+            # Sanity checks to make sure we do not create a duplicate entry
+            checkname = Track.objects.get(trackname)
+            # if checkanme != NULL
+            if applepayid != "":
+                person.applepayid = applepayid
+            # track.save()
             print("Update was successful.")
             return HttpResponseRedirect('/music_management/success.html')
         else:
@@ -332,5 +344,6 @@ def add_tracks(request):
         person = None
         if request.user.is_authenticated():
             person = Person.objects.get(username=request.user.get_username())
+        checkname = Track.objects.get(trackname)
         variables = RequestContext(request, {'form': form, 'person': person})
         return render_to_response('music_management/add_tracks.html', variables)
