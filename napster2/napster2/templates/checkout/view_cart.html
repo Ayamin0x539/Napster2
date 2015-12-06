@@ -2,12 +2,31 @@
 {% block title %}Napster 2 Dashboard{% endblock %}
 {% block head %}Shopping Cart{% endblock %}
 {% block content %}
-<p>You are currently logged in as {{ user.username }}.</p>
 
+Tracks: <br />
+{% if track_cart %}
 <table border="0">
+  {% for tuple in track_cart %}
+   <tr><th>
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_trackid" value="{{ tuple.0 }}" name="trackid" type="number" style="width:60px" readonly />
+    <input id="id_item" maxlength="40" value="{{ tuple.1 }}" name="item" type="text" readonly />
+    <input id="id_price" value="${{ tuple.2 }}" name="price" type="text" style="width:60px" readonly />
+    <input type="submit" value="Remove From Cart">
+    </form>
+    </td></tr>
+  {% endfor %}
 </table>
-{% if cart%}
-<input type="submit" value="Checkout" />
-{%endif%}
+{% endif %}
+
+User Playlists: <br />
+{% if upl_cart %}
+
+{% endif %}
+
+Staff Picks: <br />
+{% if epl_cart %}
+
+{% endif %}
 
 {% endblock %}

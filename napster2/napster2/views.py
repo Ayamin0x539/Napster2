@@ -95,7 +95,7 @@ def search(request):
             genrename = form.cleaned_data['genre']
             medianame = form.cleaned_data['media']
             
-            query = "SELECT * from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
+            query = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
 
             result = Track.objects.raw(query)
 
@@ -130,22 +130,22 @@ def search(request):
 def add_track_to_cart(request, trackidnum):
     track_cart = request.session.get('track_cart', None)
     track_obj = Track.objects.get(trackid=trackidnum)
-    data = [track_obj.name, str(track_obj.unitprice)]
+    data = (trackidnum, track_obj.name, str(track_obj.unitprice))
     print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
 
     if track_cart:
         print("CART NOT EMPTY")
-        track_cart[trackidnum] = data
+        track_cart.append(data)
     else:
         print("CART EMPTY")
-        request.session['track_cart'] = {}
+        request.session['track_cart'] = list()
         track_cart = request.session.get('track_cart', None)
-        track_cart[trackidnum] = data
+        track_cart.append(data)
 
     request.session.modified = True
     print("Cart contains:")
     for item in track_cart:
-        print("ID: " + item)
+        print(item)
     return view_cart(request)
 
 
