@@ -130,11 +130,22 @@ def search(request):
 def add_track_to_cart(request, trackidnum):
     track_cart = request.session.get('track_cart', None)
     track_obj = Track.objects.get(trackid=trackidnum)
+    data = [track_obj.name, str(track_obj.unitprice)]
+    print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
+
     if track_cart:
-        track_cart[trackidnum] = (track_obj.name, track_obj.unitprice)
+        print("CART NOT EMPTY")
+        track_cart[trackidnum] = data
     else:
+        print("CART EMPTY")
         request.session['track_cart'] = {}
-        request.session['track_cart'][trackidnum] = track_obj.name
+        track_cart = request.session.get('track_cart', None)
+        track_cart[trackidnum] = data
+
+    request.session.modified = True
+    print("Cart contains:")
+    for item in track_cart:
+        print("ID: " + item)
     return view_cart(request)
 
 
