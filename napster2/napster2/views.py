@@ -326,7 +326,7 @@ def add_tracks(request):
             size      = form.cleaned_data['size']
             # Sanity checks to make sure we do not create a duplicate entry
             checkname = Track.objects.get(trackname)
-            # if checkanme != NULL
+            # if checkname != NULL
             if applepayid != "":
                 person.applepayid = applepayid
             # track.save()
@@ -344,6 +344,7 @@ def add_tracks(request):
         person = None
         if request.user.is_authenticated():
             person = Person.objects.get(username=request.user.get_username())
+        trackname = "Snowballed"
         checkname = Track.objects.get(trackname)
         variables = RequestContext(request, {'form': form, 'person': person})
         return render_to_response('music_management/add_tracks.html', variables)
