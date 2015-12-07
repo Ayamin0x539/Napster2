@@ -156,7 +156,7 @@ def remove_track_from_cart(request, trackid):
         del track_cart[trackid]
     else:
         track_cart=track_cart
-
+    request.session.modified = True
     return view_cart(request)
 
 @login_required
@@ -184,6 +184,26 @@ def add_upl_to_cart(request, idnum):
     print("Cart contains:")
     for item in upl_cart:
         print(item)
+    return view_cart(request)
+
+@login_required
+def remove_item_from_cart(request, idnum):
+    if request.method=='POST' and 'remove_upl_from_cart' in request.POST:
+        track_cart = request.session.get('track_cart', None)
+        if track_cart[trackid]:
+            del track_cart[trackid]
+        else:
+            track_cart=track_cart
+        request.session.modified = True
+        return view_cart(request)
+    elif request.method=='POST' and 'remove_upl_from_cart' in request.POST: 
+        upl_cart = request.session.get('upl_cart', None)
+        if upl_cart[idnum]:
+            del upl_cart[idnum]
+        request.session.modified = True
+        return view_cart(request)
+    elif request.method=='POST' and 'remove_epl_from_cart' in request.POST: 
+        print("test")
     return view_cart(request)
 
 
@@ -409,3 +429,16 @@ def add_tracks(request):
             person = Person.objects.get(username=request.user.get_username())
         variables = RequestContext(request, {'form': form, 'person': person})
         return render_to_response('music_management/add_tracks.html', variables)
+
+@login_required
+def view_MyPlaylist(request):
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    print(person.personid)
+    query = "SELECT MyPlaylist.MyPlaylistID, MyPlaylist.Name from Person, Customer, MyPlaylist where Person.PersonId = Customer.CustPersonID and Customer.CustomerId = MyPlaylist.CustomerID and Person.PersonId = \"%%" + str(person.personid) + "%%\""
+    result = Myplaylist.objects.raw(query)
+
+    # make a new form for the next search
+    variables = RequestContext(request, {'result': result, 'person': person})
+    return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
