@@ -27,12 +27,25 @@ def register(request):
                 password=form.cleaned_data['password1'],
                 email=form.cleaned_data['email']
                 )
-
+            print(form.cleaned_data['affiliation'])
             person = Person(email = form.cleaned_data['email'])
             person.username = form.cleaned_data['username']
-            person.affiliation = 'Customer'
-            person.save()
-
+            
+            if form.cleaned_data['affiliation'] == 'Customer':
+                person.affiliation = 'Customer'
+                person.save()
+                print(form.cleaned_data['affiliation'])
+                customer = Customer(customerid=1) #django cannot assign the forgien key instantaneously
+                customer.save()
+                customer.customerid=person.personid
+                customer.save()
+            elif form.cleaned_data['affiliation'] == 'Employee':
+                person.affiliation = 'Employee'
+                person.save()
+                employee = Employee(personid=1) #django cannot assign the forgien key instantaneously
+                employee.save()
+                employee.personid = person.personid
+                employee.save()
             return HttpResponseRedirect('/register/success/')
         else:
             person = None
