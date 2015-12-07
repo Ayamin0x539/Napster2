@@ -26,7 +26,18 @@ User Playlists: <br />
 
 Staff Picks: <br />
 {% if epl_cart %}
-
+<table border="0">
+  {% for tuple in epl_cart %}
+   <tr><th>
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_playlistid" value="{{ tuple.0 }}" name="playlistid" type="number" style="width:60px" readonly />
+    <input id="id_item" maxlength="40" value="{{ tuple.1 }}" name="item" type="text" readonly />
+    <input id="id_price" value="${{ tuple.2 }}" name="price" type="text" style="width:60px" readonly />
+    <input type="submit" value="Remove From Cart">
+    </form>
+    </td></tr>
+  {% endfor %}
+</table>
 {% endif %}
 
 {% endblock %}

@@ -197,11 +197,23 @@ def remove_upl_from_cart(request, idnum):
 @login_required
 def add_epl_to_cart(request, idnum):
     epl_cart = request.session.get('epl_cart', None)
+    epl_obj = Playlist.objects.get(playlistid=idnum)
+    data = (idnum, epl_obj.name, "$Derp Dollars")
+    print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
+
     if epl_cart:
-        epl_cart[trackidnum]= Track.objects.get(PlaylistID=idnum)
+        print("CART NOT EMPTY")
+        epl_cart.append(data)
     else:
-        request.session['epl_cart'] = {}
-        epl_cart[trackidnum]= Track.objects.get(PlaylistID=idnum)
+        print("CART EMPTY")
+        request.session['epl_cart'] = list()
+        epl_cart = request.session.get('epl_cart', None)
+        epl_cart.append(data)
+
+    request.session.modified = True
+    print("Cart contains:")
+    for item in epl_cart:
+        print(item)
     return view_cart(request)
 
 @login_required
