@@ -80,12 +80,15 @@ def dashboard(request):
 
 @login_required
 def view_cart(request):
-    if request.method == 'POST' and 'remove_track' in request.POST:
-        # we're trying to remove something.
-        print(request.POST)
-        print("Clicked remove track.")
-        trackid = request.POST['trackid']
-        return remove_track_from_cart(request, trackid)
+    if request.method == 'POST':
+        if 'remove_track' in request.POST:
+            # we're trying to remove something.
+            print(request.POST)
+            print("Clicked remove track.")
+            trackid = request.POST['trackid']
+            return remove_track_from_cart(request, trackid)
+        elif 'checkout' in request.POST:
+            return checkout(request)
     else:
         track_cart = request.session.get('track_cart', None)
         upl_cart = request.session.get('upl_cart', None)
@@ -304,7 +307,7 @@ def search_playlists(request):
 @login_required
 def checkout(request):
     if request.method == 'POST':
-        form = OrderForm(request.POST)
+        form = OrderForm(request.POST) # no need for this. can just use session cart.
         if form.is_valid():
             order = Order()
             order.save()
@@ -312,6 +315,14 @@ def checkout(request):
         else:
             return render_to_response('checkout/failure.html', variables,)
     return render_to_response('checkout/checkout.html', variables,)
+
+@login_required
+def checkout_failure(request):
+    return render_to_response('checkout/failure.html')
+
+@login_required
+def checkout_success(request):
+    return render_to_response('checkout/success.html')
 
 @login_required
 def update_account_info(request):

@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^logout/$', views.logout_page),
     url(r'^view_cart/$', views.view_cart),
     url(r'^checkout/$', views.checkout),
+    url(r'^checkout/failure/$', views.checkout_failure),
+    url(r'^checkout/success/$', views.checkout_success),
     url(r'^demographics/$', views.demographics),
     url(r'^ordermanagement/$', views.manage_orders),
     url(r'^addtracks/$', views.add_tracks),
