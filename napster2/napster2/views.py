@@ -491,6 +491,30 @@ def add_tracks(request):
         return render_to_response('addtracks/add_tracks.html', variables)
 
 @login_required
+def add_tracks_failure(request):
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('addtracks/failure.html', variables,)
+
+@login_required
+def add_tracks_success(request):
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('addtracks/success.html', variables,)
+
+@login_required
+def add_tracks_exists(request):
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('addtracks/track_exists.html', variables,)
+
+@login_required
 def view_MyPlaylist(request):
     person = None
     form = MyPlaylistCreateForm(request.POST)
