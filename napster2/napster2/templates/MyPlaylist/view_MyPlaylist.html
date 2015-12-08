@@ -4,11 +4,24 @@
 {% block content %}
 </br>
 
+<form method="post" action=".">{% csrf_token %}
+  <table border="0">
+    {{ form.as_table }}
+  </table>
+<input type="submit" value="Create New Playlist" />
+</form>
+
 {% if result != None %}
   My Playlists: <br />
-  {% for track in result %}
-   {{ track.name }} <br />
+  {% for myplaylist in result %}
+    <tr><th> <br />
+   <form method="post" action=".">{% csrf_token %}
+    <input id="id_myplaylistid" value="{{ myplaylist.myplaylistid }}" name="myplaylistid" type="number" style="width:60px" readonly /> 
+    <input id="id_myplaylistname" maxlength="40" value="{{ myplaylist.name }}" name="myplaylist" type="text" style="width:300px" readonly />
+    <input type="submit" name="view_myplaylist" value="View Details">
+    <input type="submit" name="add_myplaylist" value="Add To Cart">
+    </form>
+    </td></tr>
   {% endfor %}
 {% endif %}
-
 {% endblock %}

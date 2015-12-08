@@ -75,7 +75,7 @@ class Employee(models.Model):
     reportsto = models.ForeignKey('self', db_column='ReportsTo', blank=True, null=True)  # Field name made lowercase.
     birthdate = models.DateTimeField(db_column='BirthDate', blank=True, null=True)  # Field name made lowercase.
     hiredate = models.DateTimeField(db_column='HireDate', blank=True, null=True)  # Field name made lowercase.
-    personid = models.IntegerField(db_column='PersonID', blank=True, null=True)  # Field name made lowercase.
+    personid = models.ForeignKey('Person', db_column='PersonID', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False

@@ -35,16 +35,12 @@ def register(request):
                 person.affiliation = 'Customer'
                 person.save()
                 print(form.cleaned_data['affiliation'])
-                customer = Customer(customerid=1) #django cannot assign the forgien key instantaneously
-                customer.save()
-                customer.customerid=person.personid
+                customer = Customer(custpersonid=person)
                 customer.save()
             elif form.cleaned_data['affiliation'] == 'Employee':
                 person.affiliation = 'Employee'
                 person.save()
-                employee = Employee(personid=1) #django cannot assign the forgien key instantaneously
-                employee.save()
-                employee.personid = person.personid
+                employee = Employee(personid=person)
                 employee.save()
             return HttpResponseRedirect('/register/success/')
         else:
@@ -176,11 +172,6 @@ def remove_track_from_cart(request, trackid):
 def add_upl_to_cart(request, idnum):
     upl_cart = request.session.get('upl_cart', None)
     upl_obj = Myplaylist.objects.get(myplaylistid=idnum)
-    tracks_in_playlist = Myplaylisttracks.objects.get(playlistid=idnum)
-    #for testing
-    for tracks in tracks_in_playlist:
-        print(tracks.name)
-
     data = (idnum, upl_obj.name, "Derp")
     print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
 
@@ -502,12 +493,31 @@ def add_tracks(request):
 @login_required
 def view_MyPlaylist(request):
     person = None
+    form = MyPlaylistCreateForm(request.POST)
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
     print(person.personid)
-    query = "SELECT MyPlaylist.MyPlaylistID, MyPlaylist.Name from Person, Customer, MyPlaylist where Person.PersonId = Customer.CustPersonID and Customer.CustomerId = MyPlaylist.CustomerID and Person.PersonId = \"%%" + str(person.personid) + "%%\""
+    query = "SELECT * from Person, Customer, MyPlaylist where Person.PersonId = Customer.CustPersonID and Customer.CustomerId = MyPlaylist.CustomerID and Person.PersonId = " + str(person.personid)
     result = Myplaylist.objects.raw(query)
-
     # make a new form for the next search
-    variables = RequestContext(request, {'result': result, 'person': person})
+    if request.method == 'POST' and 'myplaylist' in request.POST and 'add_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
+        playlist_name = request.POST['myplaylist']
+        print("You are trying to add the item " + playlist_name + " to the cart!")
+        playlistid = request.POST['myplaylistid']
+        print("You are trying to add the item " + str(playlistid) + " to the cart!")
+        return add_upl_to_cart(request, playlistid)
+    elif request.method == 'POST' and 'myplaylist' in request.POST and 'view_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
+        playlist_name = request.POST['myplaylist']
+        print("You are trying to add the item " + playlist_name + " to the cart!")
+        playlistid = request.POST['myplaylistid']
+        print("You are trying to add the item " + str(playlistid) + " to the cart!")
+        return add_upl_to_cart(request, playlistid)
+    variables = RequestContext(request, {'form':form, 'result': result, 'person': person})
     return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
+"""
+@login_required
+def edit_MyPlaylist(request, myplaylistid):
+
+@login_required
+def edit_Playlist(request):
+"""
