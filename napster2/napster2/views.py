@@ -470,7 +470,7 @@ def add_tracks(request):
                     Mediatype.save()
                     mediatype_id = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
                 # Finally, create the track
-                Track.objects.create_track(
+                newtrack = Track(
                     name=trackname,
                     albumid=album_id,
                     mediatypeid=mediatype_id,
@@ -480,6 +480,7 @@ def add_tracks(request):
                     bytes=size,
                     unitprice=price,
                 )
+                newtrack.save()
 
             print("Update was successful.")
             return HttpResponseRedirect('/addtracks/success.html')
