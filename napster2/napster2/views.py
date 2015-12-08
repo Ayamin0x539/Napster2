@@ -481,7 +481,7 @@ def add_tracks(request):
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
             variables = RequestContext(request, {'person': person})
-            return render_to_response('/addtracks/failure.html', variables,)
+            return HttpResponseRedirect('/addtracks/failure.html', variables,)
     else:
         form = AddTrack()
         person = None
