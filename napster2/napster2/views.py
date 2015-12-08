@@ -434,7 +434,7 @@ def add_tracks(request):
             if list(artist_id):
                 artist_id = list(artist_id)[0].artistid
                 album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
-                album_id = list(artist_id)[0].albumid
+                album_id = list(album_id)[0].albumid
             genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])
             genre_id = list(genre_id)[0].genreid
             mediatype_id = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
