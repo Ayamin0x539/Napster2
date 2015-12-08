@@ -321,13 +321,12 @@ def checkout(request):
             request.session.modified = True
             # the old carts should still be in those 3 cart variables.
             return checkout_success(request, track_cart, upl_cart, epl_cart)
-        person = None
-        if request.user.is_authenticated():
-            person = Person.objects.get(username=request.user.get_username())
-        variables = RequestContext(request, {'person': person})        
-        return re('checkout/checkout/')
-    else:
-        return HttpResponseRedirect('/checkout/failure/')
+    
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})        
+    return render_to_response('checkout/checkout.html', variables,)
 
 @login_required
 def checkout_failure(request):
