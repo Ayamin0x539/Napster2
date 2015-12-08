@@ -88,7 +88,8 @@ def view_cart(request):
             trackid = request.POST['trackid']
             return remove_track_from_cart(request, trackid)
         elif 'checkout' in request.POST:
-            return checkout(request)
+            print("User clicked checkout.")
+            return HttpResponseRedirect('/checkout/')
     else:
         track_cart = request.session.get('track_cart', None)
         upl_cart = request.session.get('upl_cart', None)
@@ -307,22 +308,52 @@ def search_playlists(request):
 @login_required
 def checkout(request):
     if request.method == 'POST':
-        form = OrderForm(request.POST) # no need for this. can just use session cart.
-        if form.is_valid():
-            order = Order()
-            order.save()
-            return HttpResponseRedirect('/checkout/success/')
-        else:
-            return render_to_response('checkout/failure.html', variables,)
-    return render_to_response('checkout/checkout.html', variables,)
+        track_cart = request.session.get('track_cart', None)
+        upl_cart = request.session.get('upl_cart', None)
+        epl_cart = request.session.get('epl_cart', None)
+        if track_cart is None and upl_cart is None and epl_cart is None:
+            return HttpResponseRedirect('/checkout/failure/')
+        if 'confirm' in request.POST:
+            # user hit the confirmation button, so we clear the cart
+            request.session['track_cart'] = list()
+            request.session['upl_cart'] = list()
+            request.session['epl_cart'] = list()
+            request.session.modified = True
+            # the old carts should still be in those 3 cart variables.
+            return checkout_success(request, track_cart, upl_cart, epl_cart)
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'person': person})        
+        return re('checkout/checkout/')
+    else:
+        return HttpResponseRedirect('/checkout/failure/')
 
 @login_required
 def checkout_failure(request):
-    return render_to_response('checkout/failure.html')
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('checkout/failure.html', variables,)
 
 @login_required
-def checkout_success(request):
-    return render_to_response('checkout/success.html')
+def checkout_success(request, track_cart, upl_cart, epl_cart):
+    total = 0
+    # Price is in the form "$2.99", so we will strip the first char, the $.
+    # then convert it to int.
+    for item in track_cart:
+        total += int(item[2][1:])
+    for item in upl_cart:
+        total += int(item[2][1:])
+    for item in epl_cart:
+        total += int(item[2][1:])
+    print("The total price of all the items is " + total)
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('checkout/success.html', variables,)
 
 @login_required
 def update_account_info(request):
