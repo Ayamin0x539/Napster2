@@ -440,7 +440,7 @@ def add_tracks(request):
             #Handle the track existing
             if not track_exists:
                 print("Track already exists!")
-                return HttpResponseRedirect('/addtracks/track_exists.html')
+                return HttpResponseRedirect('addtracks/track_exists.html')
 
             # Create relevant IDs, if they do not exist already
             else:
@@ -474,7 +474,7 @@ def add_tracks(request):
                 newtrack.save()
 
             print("Update was successful.")
-            return HttpResponseRedirect('/addtracks/success.html')
+            return HttpResponseRedirect('addtracks/success.html')
         else:
             print("Update was not valid.")
             person = None
