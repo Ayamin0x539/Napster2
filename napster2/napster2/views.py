@@ -437,48 +437,48 @@ def add_tracks(request):
             price = form.cleaned_data['price']
 
             # Get the information we need
-            artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", % artistname)[0]
-            album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", % albumname, artist_id)[0]
-            genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", % genrename)[0]
-            mediatype_id = MediaType.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", % mediatype)[0]
+            artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])[0]
+            album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname], [artist_id])[0]
+            genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])[0]
+            mediatype_id = MediaType.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])[0]
 
             # First, make sure that this track does not already exist. We treat a track with the same artist, album, and title as a duplicate.
             # This leaves open the possiblility for the same track name and artist on multiple albums, as you see with compilation albums or live albums
-            track_exists = Track.objects.raw("SELECT TrackId FROM Track WHERE Name=%s AND AlbumId=%s AND AristId=%s", trackname, album_id, artist_id)
+            track_exists = Track.objects.raw("SELECT TrackId FROM Track WHERE Name=%s AND AlbumId=%s AND AristId=%s", [trackname], [album_id], [artist_id])
 
             #Handle the track existing
-            if track_exists != NULL
+            if not track_exists:
                 print("Track already exists!")
                 return HttpResponseRedirect('/music_management/track_exists.html')
 
             # Create relevant IDs, if they do not exist already
-            else
-                if artist_id == NULL
+            else:
+                if not artist_id:
                     Artist.name = artistname
                     Artist.save()
-                    artist_id = Argist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", % artistname)[0]
-                if album_id == NULL
+                    artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])[0]
+                if not album_id:
                     Album.name = albumname
                     Album.save()
-                    album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", % albumname, artist_id)[0]
-                if genre_id == NULL
+                    album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname], [artist_id])[0]
+                if not genre_id:
                     Genre.name = genrename
                     Genre.save()
-                    genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", % genrename)[0]
-                if mediatype_id == NULL
+                    genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])[0]
+                if not mediatype_id:
                     MediaType.name = MediaType
                     MediaType.save()
-                    mediatype_id = MediaType.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", % mediatype)[0]
+                    mediatype_id = MediaType.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])[0]
                 # Finally, create the track
                 User.objects.create_user(
                     name=trackname,
                     albumid=album_id,
                     mediatypeid=mediatype_id,
                     genreid=genre_id,
-                    composer = composer,
-                    milliseconds = length,
-                    bytes = size,
-                    unitprice = price,
+                    composer=composer,
+                    milliseconds=length,
+                    bytes=size,
+                    unitprice=price,
                 )
 
             print("Update was successful.")
