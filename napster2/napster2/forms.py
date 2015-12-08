@@ -66,9 +66,9 @@ class AddTrack(forms.Form):
     genre = forms.CharField(label='Genre', max_length=40, required=True)
     mediatype = forms.CharField(label='Media Type', max_length=40, required=True)
     composer = forms.CharField(label='Composer', max_length=40, required=True)
-    length = forms.IntegerField(label='Length in milliseconds', required=True)
-    size = forms.IntegerField(label='Size', required=True)
-    price = forms.DecimalField(label='Unit Price', required=True)
+    length = forms.CharField(label='Length in milliseconds', required=True)
+    size = forms.CharField(label='Size', max_length=40, required=True)
+    price = forms.CharField(label='Unit Price', max_length=40, required=True)
 
 class SearchForm(forms.Form):
     track = forms.CharField(label='Track Name', max_length=40, required=False)
