@@ -502,18 +502,107 @@ def view_MyPlaylist(request):
     # make a new form for the next search
     if request.method == 'POST' and 'myplaylist' in request.POST and 'add_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
         playlist_name = request.POST['myplaylist']
-        print("You are trying to add the item " + playlist_name + " to the cart!")
         playlistid = request.POST['myplaylistid']
-        print("You are trying to add the item " + str(playlistid) + " to the cart!")
         return add_upl_to_cart(request, playlistid)
     elif request.method == 'POST' and 'myplaylist' in request.POST and 'view_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
         playlist_name = request.POST['myplaylist']
-        print("You are trying to add the item " + playlist_name + " to the cart!")
         playlistid = request.POST['myplaylistid']
-        print("You are trying to add the item " + str(playlistid) + " to the cart!")
-        return add_upl_to_cart(request, playlistid)
+        return edit_upl(request, playlistid)
     variables = RequestContext(request, {'form':form, 'result': result, 'person': person})
     return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
+
+def edit_upl(request, idnum):
+    if request.method == 'POST' and 'track' in request.POST:
+        # We have a received a search.
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            print("Search form is valid!")
+            result = None
+            trackname = form.cleaned_data['track']
+            albumname = form.cleaned_data['album']
+            artistname = form.cleaned_data['artist']
+            composername = form.cleaned_data['composer']
+            genrename = form.cleaned_data['genre']
+            medianame = form.cleaned_data['media']
+            
+            query = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
+
+            result = Track.objects.raw(query)
+
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            # make a new form for the next search
+            form = SearchForm()
+            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
+            return render_to_response('MyPlaylist/edit_MyPlaylist.html', variables,)
+        else:
+            print("Search form fields not valid.")
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
+            return render_to_response('/search/failure.html', variables,)
+    elif request.method == 'POST' and 'item' in request.POST:
+        item_name = request.POST['item']
+        print("You are trying to add the item " + item_name + " to the cart!")
+        trackid = request.POST['trackid']
+        return add_track_to_cart(request, trackid)
+    else:
+        form = SearchForm()
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'form': form, 'person': person})
+        return render_to_response('MyPlaylist/edit_MyPlaylist.html', variables)
+
+
+def edit_epl(request, idnum):
+    if request.method == 'POST' and 'track' in request.POST:
+        # We have a received a search.
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            print("Search form is valid!")
+            result = None
+            trackname = form.cleaned_data['track']
+            albumname = form.cleaned_data['album']
+            artistname = form.cleaned_data['artist']
+            composername = form.cleaned_data['composer']
+            genrename = form.cleaned_data['genre']
+            medianame = form.cleaned_data['media']
+            
+            query = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
+
+            result = Track.objects.raw(query)
+
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            # make a new form for the next search
+            form = SearchForm()
+            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
+            return render_to_response('search/search.html', variables,)
+        else:
+            print("Search form fields not valid.")
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
+            return render_to_response('/search/failure.html', variables,)
+    elif request.method == 'POST' and 'item' in request.POST:
+        item_name = request.POST['item']
+        print("You are trying to add the item " + item_name + " to the cart!")
+        trackid = request.POST['trackid']
+        return add_track_to_cart(request, trackid)
+    else:
+        form = SearchForm()
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'form': form, 'person': person})
+        return render_to_response('search/search.html', variables)
+
+
 """
 @login_required
 def edit_MyPlaylist(request, myplaylistid):

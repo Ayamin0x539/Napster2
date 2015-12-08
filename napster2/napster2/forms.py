@@ -85,4 +85,7 @@ class PlaylistSearchForm(forms.Form):
     genre = forms.CharField(label='Genre', max_length=40, required=False)
 
 class MyPlaylistCreateForm(forms.Form):
+    name = forms.CharField(label='My Playlist Name', max_length=40, required=False)        
+
+class PlaylistCreateForm(forms.Form):
     name = forms.CharField(label='Playlist Name', max_length=40, required=False)        

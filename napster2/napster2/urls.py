@@ -36,5 +36,6 @@ urlpatterns = [
     url(r'^search/$', views.search),
     url(r'^search_playlists/$', views.search_playlists),
     url(r'^view_MyPlaylist/$', views.view_MyPlaylist),
+    url(r'^edit_MyPlaylist/$', views.edit_upl),  
 #    url(r'^checkout_success', views.checkout_success),
 ]
