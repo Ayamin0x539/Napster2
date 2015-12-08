@@ -470,7 +470,7 @@ def add_tracks(request):
                     Mediatype.save()
                     mediatype_id = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
                 # Finally, create the track
-                User.objects.create_track(
+                Track.objects.create_track(
                     name=trackname,
                     albumid=album_id,
                     mediatypeid=mediatype_id,
