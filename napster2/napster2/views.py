@@ -429,34 +429,34 @@ def add_tracks(request):
 
             # Get the information we need
             artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
-            album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname], [artist_id])
+            album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
             genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])
             mediatype_id = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
 
             # First, make sure that this track does not already exist. We treat a track with the same artist and album
             # This leaves open the possiblility for the same track name and artist on multiple albums, as you see with compilation albums or live albums
-            track_exists = Track.objects.raw("SELECT TrackId FROM Track WHERE Name=%s AND AlbumId=%s", [trackname], [album_id])
+            track_exists = Track.objects.raw("SELECT TrackId FROM Track WHERE Name=%s AND AlbumId=%s", [trackname, album_id])
 
             #Handle the track existing
-            if not track_exists:
+            if track_exists.exists():
                 print("Track already exists!")
                 return render_to_response('addtracks/track_exists.html')
 
             # Create relevant IDs, if they do not exist already
             else:
-                if not artist_id:
+                if not artist_id.exists():
                     Artist.name = artistname
                     Artist.save()
                     artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])[0]
-                if not album_id:
+                if not album_id.exists():
                     Album.name = albumname
                     Album.save()
-                    album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname], [artist_id])[0]
-                if not genre_id:
+                    album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])[0]
+                if not genre_id.exists():
                     Genre.name = genrename
                     Genre.save()
                     genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])[0]
-                if not mediatype_id:
+                if not mediatype_id.exists():
                     Mediatype.name = mediatype
                     Mediatype.save()
                     mediatype_id = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])[0]
