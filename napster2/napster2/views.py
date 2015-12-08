@@ -440,7 +440,7 @@ def add_tracks(request):
             #Handle the track existing
             if not track_exists:
                 print("Track already exists!")
-                return HttpResponseRedirect('addtracks/track_exists.html')
+                return render_to_response('addtracks/track_exists.html')
 
             # Create relevant IDs, if they do not exist already
             else:
@@ -474,14 +474,14 @@ def add_tracks(request):
                 newtrack.save()
 
             print("Update was successful.")
-            return HttpResponseRedirect('addtracks/success.html')
+            return render_to_response('addtracks/success.html')
         else:
             print("Update was not valid.")
             person = None
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
             variables = RequestContext(request, {'person': person})
-            return HttpResponseRedirect('/addtracks/failure.html', variables,)
+            return render_to_response('addtracks/failure.html', variables,)
     else:
         form = AddTrack()
         person = None
