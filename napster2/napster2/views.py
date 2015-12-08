@@ -496,7 +496,7 @@ def add_tracks(request):
         if request.user.is_authenticated():
             person = Person.objects.get(username=request.user.get_username())
         variables = RequestContext(request, {'form': form, 'person': person})
-        return render_to_response('music_management/add_tracks.html', variables)
+        return render_to_response('addtracks/add_tracks.html', variables)
 
 @login_required
 def view_MyPlaylist(request):
