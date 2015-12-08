@@ -441,17 +441,19 @@ def add_tracks(request):
             if list(artist_id):
                 artist_id = list(artist_id)[0].artistid
                 album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
+                album_id = list(album_id)[0].albumid
             genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])
+            genre_id = list(genre_id)[0].genreid
             mediatype_id = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
+            mediatype_id = list(mediatype_id)[0].mediatypeid
 
             # First, make sure that this track does not already exist. We treat a track with the same artist and album
             # This leaves open the possiblility for the same track name and artist on multiple albums, as you see with compilation albums or live albums
-            if album_id != None and list(album_id):
-                album_id = list(album_id)[0]
+            if album_id != None:
                 track_exists = Track.objects.raw("SELECT TrackId FROM Track WHERE Name=%s AND AlbumId=%s", [trackname, album_id])
 
             #Handle the track existing
-            if track_exists != None and list(track_exists):
+            if track_exists != None:
                 print("Track already exists!")
                 return render_to_response('addtracks/track_exists.html')
 
