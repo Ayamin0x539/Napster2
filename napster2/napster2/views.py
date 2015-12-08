@@ -438,7 +438,8 @@ def add_tracks(request):
             track_exists = Track.objects.raw("SELECT TrackId FROM Track WHERE Name=%s AND AlbumId=%s", [trackname, album_id])
 
             #Handle the track existing
-            if track_exists.exists():
+            print(track_exists)
+            if track_exists != None:
                 print("Track already exists!")
                 return render_to_response('addtracks/track_exists.html')
 
