@@ -80,14 +80,23 @@ def dashboard(request):
 
 @login_required
 def view_cart(request):
-    track_cart = request.session.get('track_cart', None)
-    upl_cart = request.session.get('upl_cart', None)
-    epl_cart = request.session.get('epl_cart', None)
-    person = None
-    if request.user.is_authenticated():
-        person = Person.objects.get(username=request.user.get_username())
-    variables = RequestContext(request, {'person': person, 'user': request.user, 'track_cart': track_cart, 'upl_cart': upl_cart, 'epl_cart': epl_cart})
-    return render_to_response('checkout/view_cart.html', variables,)
+    if request.method == 'POST' and 'remove_track' in request.POST:
+        # we're trying to remove something.
+        print(request.POST)
+        print("Clicked remove track.")
+        trackid = request.POST['trackid']
+        return remove_track_from_cart(request, trackid)
+    else:
+        track_cart = request.session.get('track_cart', None)
+        upl_cart = request.session.get('upl_cart', None)
+        epl_cart = request.session.get('epl_cart', None)
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'person': person, 'user': request.user, 'track_cart': track_cart, 'upl_cart': upl_cart, 'epl_cart': epl_cart})
+        print("In view_cart, cart is: ")
+        print(track_cart)
+        return render_to_response('checkout/view_cart.html', variables,)
 
 @login_required
 def search(request):
@@ -140,6 +149,7 @@ def search(request):
 def add_track_to_cart(request, trackidnum):
     track_cart = request.session.get('track_cart', None)
     track_obj = Track.objects.get(trackid=trackidnum)
+    # Track data is a 3-tuple: (track ID, track Name, price)
     data = (trackidnum, track_obj.name, str(track_obj.unitprice))
     print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
 
@@ -154,20 +164,17 @@ def add_track_to_cart(request, trackidnum):
 
     request.session.modified = True
     print("Cart contains:")
-    for item in track_cart:
-        print(item)
-    return view_cart(request)
+    print(track_cart)
+    return HttpResponseRedirect("/view_cart/")
 
 
 @login_required
 def remove_track_from_cart(request, trackid):
     track_cart = request.session.get('track_cart', None)
-    if track_cart[trackid]:
-        del track_cart[trackid]
-    else:
-        track_cart=track_cart
-    request.session.modified = True
-    return view_cart(request)
+    track_cart = [(tid, name, price) for tid, name, price in track_cart if tid != trackid] # hurrah for list comprehensions.
+    request.session['track_cart'] = track_cart # set it back
+    request.session.modified = True # save changes
+    return HttpResponseRedirect("/view_cart/")
 
 @login_required
 def add_upl_to_cart(request, idnum):
