@@ -480,20 +480,27 @@ def add_tracks(request):
             length = form.cleaned_data['length']
             size = form.cleaned_data['size']
             price = form.cleaned_data['price']
+            album_id_object = None
             album_id = None
+            track_exists_object = None
             track_exists = None
+            genre_id = None
+            genre_id_object = None
+            mediatype_id = None
+            mediatype_id_object = None
             # Get the information we need
-            artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
-            if list(artist_id):
-                artist_id = list(artist_id)[0].artistid
-                album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
-                album_id = list(album_id)[0].albumid
-            genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])
-            if list(genre_id):
-                genre_id = list(genre_id)[0].genreid
-            mediatype_id = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
-            if list(mediatype_id):
-                mediatype_id = list(mediatype_id)[0].mediatypeid
+            artist_id_object = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
+            if list(artist_id_object):
+                artist_id = list(artist_id_object)[0].artistid
+                album_id_object = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
+                if list(album_id_object):
+                    album_id = list(album_id_object)[0].albumid
+            genre_id_object = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])
+            if list(genre_id_object):
+                genre_id = list(genre_id_object)[0].genreid
+            mediatype_id_object = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
+            if list(mediatype_id_object):
+                mediatype_id = list(mediatype_id_object)[0].mediatypeid
 
             # First, make sure that this track does not already exist. We treat a track with the same artist and album
             # This leaves open the possiblility for the same track name and artist on multiple albums, as you see with compilation albums or live albums
@@ -507,28 +514,31 @@ def add_tracks(request):
 
             # Create relevant IDs, if they do not exist already
             else:
-                if not list(artist_id):
+                if not list(artist_id_object):
                     newartist = Artist(name = artistname)
                     newartist.save()
                     artist_id = newartist.artistid
                 if album_id is None:
-                    newalbum = Album(title = albumname, artistid = artist_id)
+                    artist_id_object = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])[0]
+                    newalbum = Album(title = albumname, artistid = artist_id_object)
                     newalbum.save()
                     album_id = newalbum.albumid
-                if not list(genre_id):
+                    album_id_object = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])[0]
+                if genre_id is None:
                     newgenre = Genre(name = genrename)
                     newgenre.save()
                     genre_id = newgenre.genreid
-                if not list(mediatype_id):
+                    genre_id_object = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])[0]
+                if mediatype_id is None:
                     newmediatype = Mediatype(name = mediatype)
                     newmediatype.save()
-                    mediatype_id = newmediatype.mediatypeid
+                    mediatype_id_object = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])[0]
                 # Finally, create the track
                 newtrack = Track(
                     name=trackname,
-                    albumid=album_id,
-                    mediatypeid=mediatype_id,
-                    genreid=genre_id,
+                    albumid=album_id_object,
+                    mediatypeid=mediatype_id_object,
+                    genreid=genre_id_object,
                     composer=composer,
                     milliseconds=length,
                     bytes=size,
