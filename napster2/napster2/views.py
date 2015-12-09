@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.shortcuts import render
 import time
+import datetime
 
 def index(request): # request parameter has host params (ip, etc)
     person = None
@@ -312,7 +313,9 @@ def checkout(request):
     upl_cart = request.session.get('upl_cart', None)
     epl_cart = request.session.get('epl_cart', None)
     if request.method == 'POST':
-        if track_cart is None and upl_cart is None and epl_cart is None:
+        null_check = track_cart is None and upl_cart is None and epl_cart is None
+        if null_check or (len(track_cart) == 0 and len(upl_cart) == 0 and len(epl_cart) == 0):
+            # either null or empty shopping carts. can't check out.
             return HttpResponseRedirect('/checkout/failure/')
         if 'confirm' in request.POST:
             # user hit the confirmation button, so we clear the cart
@@ -341,7 +344,7 @@ def checkout(request):
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
     show_confirm_button = person.email != "" and person.postalcode != "" and person.city != "" and person.country != "" and (person.creditcardnumber != "" or person.paypalemail != "" or person.googlepayid != "" or person.applepayid != "")
-    variables = RequestContext(request, {'person': person, 'user': request.user, 'track_cart': track_cart, 'upl_cart': upl_cart, 'epl_cart': epl_cart, 'total_price': total_price, 'show_confirm_button': show_confirm_button})
+    variables = RequestContext(request, {'person': person, 'user': request.user, 'track_cart': track_cart, 'upl_cart': upl_cart, 'epl_cart': epl_cart, 'total_price': str(total_price), 'show_confirm_button': show_confirm_button})
     return render_to_response('checkout/checkout.html', variables,)
 
 @login_required
@@ -368,7 +371,7 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
 
     # Get the current date and time.
     now = datetime.datetime.now()
-    sql_date_obj = now.strftime('%Y-%m-%d %H:%M:%S')
+    sql_date_obj = now.strftime('%Y-%m-%d')
     # Price is in the form "$2.99", so we will strip the first char, the $.
     # then convert it to float
 
@@ -378,13 +381,14 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
         for item in track_cart:
             total_track += float(item[2][1:])
         # Insert into Order.
-        order = Order(customerid=customer.customerid, price=str(total_track), dateentered=sql_date_obj)
+        order = Order(customerid=customer, price=str(total_track), dateentered=sql_date_obj)
         order.save()
         # Insert into OrderTrack (m:n relationship). 
         # Need to insert each track.
         for item in track_cart: # item: (trackid, trackname, trackprice)
-            trackid = int(item[0])
-            ordertrack = Ordertrack(orderid=order.orderid, ordertrackid=trackid)
+            track_id = int(item[0])
+            track_obj = Track.objects.get(trackid=track_id)
+            ordertrack = Ordertrack(orderid=order, ordertrackid=track_obj)
             ordertrack.save()
     # Case 2: We have playlist items in user-made playlists to check out.
     if upl_cart:
@@ -392,13 +396,13 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
         for item in upl_cart:
             total_upl += float(item[2][1:])
         # Insert into Order.
-        order = Order(customerid=customer.customerid, playlistmadby="Customer",price=str(total_upl), dateentered=sql_date_obj)
+        order = Order(customerid=customer, playlistmadby="Customer",price=str(total_upl), dateentered=sql_date_obj)
         order.save()
         # Insert into OrderCustPlaylist (m:n relationship).
         # Need to insert each playlist.
         for item in upl_cart: # item: (id, name, price)
             playlistid = int(item[0]) 
-            ordercustplaylist = Ordercustplaylist(ordercustid=customer.customerid, custplaylistid=playlistid)
+            ordercustplaylist = Ordercustplaylist(ordercustid=customer, custplaylistid=playlistid)
             ordercustplaylist.save()
     # Case 3: We have playlist items in employee-made playlists to check out.
     if epl_cart:
@@ -414,7 +418,6 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
             playlistid = int(item[0]) # I guess orderempid is really the customer id.... lolwut. bad naming.
             orderempplaylist = Orderempplaylist(orderempid=customer.customerid, empplaylistid=playlistid)
             orderempplaylist.save()
-    print("The total price of all the items is " + str(total))
 
     variables = RequestContext(request, {'person': person})
     return render_to_response('checkout/success.html', variables,)

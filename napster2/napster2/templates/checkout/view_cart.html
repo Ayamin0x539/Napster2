@@ -17,10 +17,13 @@ Tracks: <br />
     </td></tr>
   {% endfor %}
 </table>
+{% else %}
+-none-<br />
 {% endif %}
 
 User Playlists: <br />
 {% if upl_cart %}
+<table border="0">
  {% for tuple in upl_cart %}
    <tr><th>
     <form method="post" action=".">{% csrf_token %}
@@ -31,6 +34,9 @@ User Playlists: <br />
     </form>
     </td></tr>
   {% endfor %}
+</table>
+{% else %}
+-none-<br />
 {% endif %}
 
 Staff Picks: <br />
@@ -47,6 +53,8 @@ Staff Picks: <br />
     </td></tr>
   {% endfor %}
 </table>
+{% else %}
+-none-<br />
 {% endif %}
 
 <form method="post" action=".">{% csrf_token %}
