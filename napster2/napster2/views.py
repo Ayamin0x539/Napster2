@@ -340,6 +340,7 @@ def checkout(request):
         for item in epl_cart:
             total_price += float(item[2][1:])
 
+    total_price = float('%.2f'%total_price)
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
@@ -380,6 +381,7 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
         # Calculate price.
         for item in track_cart:
             total_track += float(item[2][1:])
+        total_track = float('%.2f'%(total_track))
         # Insert into Order.
         order = Order(customerid=customer, price=str(total_track), dateentered=sql_date_obj)
         order.save()
@@ -395,6 +397,7 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
         # Calculate price.
         for item in upl_cart:
             total_upl += float(item[2][1:])
+        total_upl = float('%.2f'%(total_upl))
         # Insert into Order.
         order = Order(customerid=customer, playlistmadby="Customer",price=str(total_upl), dateentered=sql_date_obj)
         order.save()
@@ -409,6 +412,7 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
         # Calculate price.
         for item in epl_cart:
             total_epl += float(item[2][1:])
+        total_epl = float('%.2f'%(total_epl))
         # Insert into Order.
         order = Order(customerid=customer.customerid, playlistmadby="Employee",price=str(total_upl), dateentered=sql_date_obj)
         order.save()
