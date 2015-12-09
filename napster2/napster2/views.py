@@ -475,13 +475,13 @@ def add_tracks(request):
             length = form.cleaned_data['length']
             size = form.cleaned_data['size']
             price = form.cleaned_data['price']
-            album_id = None
-            track_exists = None
-            genre_id = None
-            mediatype_id = None
+            album_id_object = None
+            track_exists_object = None
+            genre_id_object = None
+            mediatype_id_object = None
             # Get the information we need
-            artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
-            if list(artist_id):
+            artist_id_object = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
+            if list(artist_id_object):
                 artist_id = list(artist_id)[0].artistid
                 album_id_object = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
                 if list(album_id_object):
