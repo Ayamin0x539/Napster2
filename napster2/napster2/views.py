@@ -521,7 +521,7 @@ def add_tracks(request):
                     newmediatype.save()
                     mediatype_id = newmediatype.mediatypeid
                 # Finally, create the track
-                newtrack = Track.object(
+                newtrack = Track(
                     name=trackname,
                     albumid=album_id,
                     mediatypeid=mediatype_id,
