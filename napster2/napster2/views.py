@@ -42,6 +42,9 @@ def register(request):
                 person.save()
                 employee = Employee(personid=person)
                 employee.save()
+            elif form.cleaned_data['affiliation'] == 'Administrator':
+                person.affiliation = 'Administrator'
+                person.save()
             return HttpResponseRedirect('/register/success/')
         else:
             person = None
