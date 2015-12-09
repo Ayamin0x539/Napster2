@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Sales Reporting{% endblock %}
+{% block head %}Sales Reporting{% endblock %}
+{% block content %}
+
+<p>This is the employee sales reporting screen.</p>
+
+<p>
+<!--
+We currently serve {{ customer_numbers }} customers in {{ customer_country_numbers }} different countries.
+
+Probably change this to say some aggregate information about sales. -->
+</p>
+
+Search for Sales: <br />
+
+<form method="post" action=".">{% csrf_token %}
+  <table border="0">
+    {{ form.as_table }}
+  </table>
+<input type="submit" name="search"  value="Search" />
+</form>
+
+
+<!-- Format below to pull sales results from the result. -->
+
+{% if result != None %}
+<hr> 
+ <b> Search results:</b><br />
+<hr> <br />
+  <table border="1">
+   <tr> <!-- 11 fields -->
+     <th>ID</th>
+     <th>First Name</th>
+     <th>Last Name</th>
+     <th>Phone</th>
+     <th>Email</th>
+     <th>ZipCode</th>
+     <th>Address</th>
+     <th>City</th>
+     <th>State</th>
+     <th>Country</th>
+     <th>Fax</th>
+   </tr>
+  {% for p in result %}
+   <tr>
+     <td>{{ p.personid }}</td>
+     <td>{{ p.firstname }}</td>
+     <td>{{ p.lastname }}</td>
+     <td width="200">{{ p.phone }}</td>
+     <td>{{ p.email }}</td>
+     <td>{{ p.postalcode }}</td>
+     <td>{{ p.address }}</td>
+     <td>{{ p.city }}</td>
+     <td>{{ p.state }}</td>
+     <td>{{ p.country }}</td>
+     <td>{{ p.fax }}</td>
+   </tr>
+  {% endfor %}
+   </table>
+{% endif %}
+
+{% endblock %}

@@ -101,3 +101,22 @@ class DemographicsForm(forms.Form):
     state = forms.CharField(label='State', max_length=40, required=False)
     country = forms.CharField(label='Country', max_length=45, required=False)
     fax = forms.CharField(label='Fax', max_length=45, required=False)
+
+class SalesReportingForm(forms.Form):
+    month = forms.CharField(label='Month', max_length=40, required=False)
+    begin_date = forms.CharField(label='Begin Date', max_length=40, required=False)
+    end_date = forms.CharField(label='End Date', max_length=40, required=False)
+    city = forms.CharField(label='City', max_length=40, required=False)
+    state = forms.CharField(label='State', max_length=40, required=False)
+    country = forms.CharField(label='Country', max_length=10, required=False)
+    firstname = forms.CharField(label='Customer First Name', max_length=40, required=False)
+    lastname = forms.CharField(label='Customer Last Name', max_length=40, required=False)
+
+class InventoryReportingForm(forms.Form):
+    track = forms.CharField(label='Track Name', max_length=40, required=False)
+    album = forms.CharField(label='Album Name', max_length=40, required=False)
+    artist = forms.CharField(label='Artist Name', max_length=40, required=False)
+    composer = forms.CharField(label='Composer', max_length=40, required=False)
+    genre = forms.CharField(label='Genre', max_length=40, required=False)
+    media = forms.CharField(label='Media', max_length=10, required=False)
+    

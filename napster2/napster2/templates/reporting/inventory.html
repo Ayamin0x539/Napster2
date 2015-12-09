@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Inventory Reporting{% endblock %}
+{% block head %}Inventory{% endblock %}
+{% block content %}
+
+<p>Administrator inventory reporting screen.</p>
+
+<p>
+<!-- We currently serve {{ customer_numbers }} customers in {{ customer_country_numbers }} different countries. 
+
+This needs to be replaced with some report about inventory I guess. -->
+</p>
+
+Search through Inventory: <br />
+
+<form method="post" action=".">{% csrf_token %}
+  <table border="0">
+    {{ form.as_table }}
+  </table>
+<input type="submit" name="search"  value="Search" />
+</form>
+
+<!-- Format the below to work with inventory.
+Probably show Track/Playlist information. -->
+{% if tracks_found != None %}
+<hr> 
+ <b> Search results:</b><br />
+Found {{ num_tracks_found }} tracks!
+<hr> <br />
+  <table border="1">
+   <tr>
+     <th>Track ID</th>
+     <th>Track Name</th>
+     <th>Track Artist</th>
+   </tr>
+  {% for track in tracks_found %}
+   <tr>
+    <td>{{ track.trackid }}</td>
+    <td>{{ track.name }}</td>
+    <td>{{ track.artistname }}</td>
+  </tr>
+  {% endfor %}
+{% endif %}
+{% endblock %}

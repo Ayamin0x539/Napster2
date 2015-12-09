@@ -113,7 +113,7 @@ def dashboard(request):
         unfilled_orders = Order.objects.raw(unfilled_orders_query)
         variables = RequestContext(request, {'person': person, 'user': request.user, 'filled_orders': filled_orders, 'unfilled_orders': unfilled_orders})
         return render_to_response('dashboard.html', variables,)
-    if person.affiliation == "Employee":
+    if person.affiliation == "Employee" or person.affiliation == "Administrator":
         # Employee dashboard.
         unfilled_orders_query = "SELECT * FROM `Order` WHERE Confirmed = 'f'"
         unfilled_orders = Order.objects.raw(unfilled_orders_query)
@@ -568,13 +568,55 @@ def update_success(request):
     return render_to_response('update/success.html', variables,)
 
 @login_required
-def run_report(request):
-    form = AdministratorRunReportForm(request.POST)
+def sales_reporting(request):
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'person': person})
+    return render_to_response('reporting/sales.html', variables,)
 
 @login_required
-def employee_productivity_Report(request):
-    form = AdministratorEmployeeProductivityForm(request.POST)
+def inventory_reporting(request):
+    if request.method == 'POST' and 'track' in request.POST:
+        # We have a received a search.
+        form = InventoryReportingForm(request.POST)
+        if form.is_valid():
+            print("Search form is valid!")
+            tracks_found = None
+            trackname = form.cleaned_data['track']
+            albumname = form.cleaned_data['album']
+            artistname = form.cleaned_data['artist']
+            composername = form.cleaned_data['composer']
+            genrename = form.cleaned_data['genre']
+            medianame = form.cleaned_data['media']
+            
+            query = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
 
+            tracks_found = Track.objects.raw(query)
+            num_tracks_found = str(len(list(tracks_found)))
+            print("Found " + num_tracks_found + " results in search!")
+
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            # make a new form for the next search
+            form = SearchForm()
+            variables = RequestContext(request, {'tracks_found': tracks_found, 'person': person, 'form': form, 'num_tracks_found': num_tracks_found})
+            return render_to_response('reporting/inventory.html', variables,)
+        else:
+            print("Search form fields not valid.")
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
+            return render_to_response('reporting/inventory-failure.html', variables,)
+    else:
+        form = InventoryReportingForm()
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'form': form, 'person': person})
+        return render_to_response('reporting/inventory.html', variables)
 
 @login_required
 def demographics(request):
