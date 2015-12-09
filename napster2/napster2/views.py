@@ -723,7 +723,10 @@ def edit_upl(request, idnum):
         trackid = request.POST['searchtrackid']
         return add_track_to_upl(request, trackid, idnum)
     elif request.method == 'POST' and 'playlisttrack' in request.POST:
-
+        track_name = request.POST['searchtrackname']
+        print("You are trying to add the item " + track_name + " to the playlist!")
+        trackid = request.POST['searchtrackid']
+        return add_track_to_upl(request, trackid, idnum) 
     else:
         form = SearchForm()
         person = None
