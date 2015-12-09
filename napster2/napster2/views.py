@@ -481,14 +481,14 @@ def add_tracks(request):
             artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
             if list(artist_id):
                 artist_id = list(artist_id)[0].artistid
-                album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
-                if list(album_id):
+                album_id_object = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
+                if list(album_id_object):
                     album_id = list(album_id)[0].albumid
-            genre_id = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])
-            if list(genre_id):
+            genre_id_object = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])
+            if list(genre_id_object):
                 genre_id = list(genre_id)[0].genreid
-            mediatype_id = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
-            if list(mediatype_id):
+            mediatype_id_object = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
+            if list(mediatype_id_object):
                 mediatype_id = list(mediatype_id)[0].mediatypeid
 
             # First, make sure that this track does not already exist. We treat a track with the same artist and album
@@ -523,9 +523,9 @@ def add_tracks(request):
                 # Finally, create the track
                 newtrack = Track(
                     name=trackname,
-                    albumid=album_id,
-                    mediatypeid=mediatype_id,
-                    genreid=genre_id,
+                    albumid=album_id_object,
+                    mediatypeid=mediatype_id_object,
+                    genreid=genre_id_object,
                     composer=composer,
                     milliseconds=length,
                     bytes=size,
