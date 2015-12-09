@@ -525,7 +525,7 @@ def add_tracks(request):
                 if mediatype_id is None:
                     newmediatype = Mediatype(name = mediatype)
                     newmediatype.save()
-                    mediatype_id = newmediatype.mediatypeid
+                    mediatype_id_object = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])[0]
                 # Finally, create the track
                 newtrack = Track(
                     name=trackname,
