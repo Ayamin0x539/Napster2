@@ -477,6 +477,8 @@ def add_tracks(request):
             price = form.cleaned_data['price']
             album_id = None
             track_exists = None
+            genre_id = None
+            mediatype_id = None
             # Get the information we need
             artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
             if list(artist_id):
@@ -512,11 +514,11 @@ def add_tracks(request):
                     newalbum = Album(title = albumname, artistid = artist_id_object)
                     newalbum.save()
                     album_id = newalbum.albumid
-                if not list(genre_id):
+                if genre_id is None:
                     newgenre = Genre(name = genrename)
                     newgenre.save()
                     genre_id = newgenre.genreid
-                if not list(mediatype_id):
+                if mediatype_id is None:
                     newmediatype = Mediatype(name = mediatype)
                     newmediatype.save()
                     mediatype_id = newmediatype.mediatypeid
