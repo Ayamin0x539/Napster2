@@ -476,7 +476,9 @@ def add_tracks(request):
             size = form.cleaned_data['size']
             price = form.cleaned_data['price']
             album_id_object = None
+            album_id = None
             track_exists_object = None
+            track_exists = None
             genre_id_object = None
             mediatype_id_object = None
             # Get the information we need
