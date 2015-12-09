@@ -507,6 +507,7 @@ def add_tracks(request):
                     newartist.save()
                     artist_id = newartist.artistid
                 if album_id is None:
+                    artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])[0]
                     newalbum = Album(title = albumname, artistid = artist_id)
                     newalbum.save()
                     album_id = newalbum.albumid
