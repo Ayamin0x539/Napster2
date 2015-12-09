@@ -147,14 +147,22 @@ def view_order_details(request, order_id):
 def view_cart(request):
     if request.method == 'POST':
         if 'remove_track' in request.POST:
-            # we're trying to remove something.
-            print(request.POST)
-            print("Clicked remove track.")
+            print("Clicked Remove Track")
             trackid = request.POST['trackid']
             return remove_track_from_cart(request, trackid)
         elif 'checkout' in request.POST:
             print("User clicked checkout.")
             return HttpResponseRedirect('/checkout/')
+        elif 'remove_myplaylist' in request.POST: 
+            print("Clicked Remove UPL")
+            user_playlist_id = request.POST['myplaylistid']
+            return remove_upl_from_cart(request, user_playlist_id)
+        elif 'remove_playlist' in request.POST: 
+            print("Clicked Remove EPL")
+            employee_playlist_id = request.POST['playlistid']
+            return remove_epl_from_cart(request, employee_playlist_id)
+        return HttpResponseRedirect("/view_cart/")
+
     else:
         track_cart = request.session.get('track_cart', None)
         upl_cart = request.session.get('upl_cart', None)
@@ -220,7 +228,6 @@ def add_track_to_cart(request, trackidnum):
     track_obj = Track.objects.get(trackid=trackidnum)
     # Track data is a 3-tuple: (track ID, track Name, price)
     data = (trackidnum, track_obj.name, str(track_obj.unitprice))
-    print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
 
     if track_cart:
         print("CART NOT EMPTY")
@@ -232,7 +239,7 @@ def add_track_to_cart(request, trackidnum):
         track_cart.append(data)
 
     request.session.modified = True
-    print("Cart contains:")
+    print("TRACK Cart contains:")
     print(track_cart)
     return HttpResponseRedirect("/view_cart/")
 
@@ -249,9 +256,13 @@ def remove_track_from_cart(request, trackid):
 def add_upl_to_cart(request, idnum):
     upl_cart = request.session.get('upl_cart', None)
     upl_obj = Myplaylist.objects.get(myplaylistid=idnum)
-    data = (idnum, upl_obj.name, "Derp")
-    print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
-
+    tracks_query = "SELECT * FROM Track, MyPlaylist, MyPlaylistTracks WHERE MyPlaylistTracks.TrackID = Track.TrackId AND MyPlaylistTracks.MyPlaylistID = MyPlaylist.MyPlaylistID AND MyPlaylist.MyPlaylistId = '" + idnum + "'"
+    tracks = Track.objects.raw(tracks_query)
+    total_cost = 0
+    for track in tracks:
+        total_cost += track.unitprice
+    total_cost = float('%.2f'%total_cost) # truncate to 2 decimal places
+    data = (idnum, upl_obj.name, str(total_cost))
     if upl_cart:
         print("CART NOT EMPTY")
         upl_cart.append(data)
@@ -261,46 +272,42 @@ def add_upl_to_cart(request, idnum):
         upl_cart = request.session.get('upl_cart', None)
         upl_cart.append(data)
     request.session.modified = True
-    print("Cart contains:")
-    for item in upl_cart:
-        print(item)
+    print("UPL Cart contains:")
+    print(upl_cart)
+    return HttpResponseRedirect("/view_cart/")
+
+@login_required
+def remove_upl_from_cart(request, idnum):
+    upl_cart = request.session.get('upl_cart', None)
+    upl_cart = [(pid, name, price) for pid, name, price in upl_cart if pid != idnum]
+    request.session['upl_cart'] = upl_cart
+    request.session.modified = True
     return HttpResponseRedirect("/view_cart/")
 
 @login_required
 def remove_item_from_cart(request, idnum):
     if request.method=='POST' and 'remove_track' in request.POST:
-        track_cart = request.session.get('track_cart', None)
-        if track_cart[trackid]:
-            del track_cart[trackid]
-        else:
-            track_cart=track_cart
-        request.session.modified = True
-        return view_cart(request)
+        track_id = request.POST['trackid']
+        return remove_track_from_cart(request, track_id)
     elif request.method=='POST' and 'remove_upl_from_cart' in request.POST: 
-        upl_cart = request.session.get('upl_cart', None)
-        if upl_cart[idnum]:
-            del upl_cart[idnum]
-        request.session.modified = True
-        return view_cart(request)
+        user_playlist_id = request.POST['myplaylistid']
+        return remove_upl_from_cart(request, user_playlist_id)
     elif request.method=='POST' and 'remove_epl_from_cart' in request.POST: 
-        print("test")
-    return view_cart(request)
-
-
-@login_required
-def remove_upl_from_cart(request, idnum):
-    upl_cart = request.session.get('upl_cart', None)
-    if upl_cart[idnum]:
-        del upl_cart[idnum]
-    return view_cart(request)
+        employee_playlist_id = request.POST['playlistid']
+        return remove_epl_from_cart(request, employee_playlist_id)
+    return HttpResponseRedirect("/view_cart/")
 
 @login_required
 def add_epl_to_cart(request, idnum):
     epl_cart = request.session.get('epl_cart', None)
     epl_obj = Playlist.objects.get(playlistid=idnum)
-    data = (idnum, epl_obj.name, "$Derp Dollars")
-    print("Added " + data[0] + " to cart, which costs $" + data[1] + "!")
-
+    tracks_query = "SELECT * FROM Track, Playlist, PlaylistTrack WHERE PlaylistTrack.TrackId = Track.TrackId AND PlaylistTrack.PlaylistId = Playlist.PlaylistId AND Playlist.PlaylistId = '" + idnum + "'"
+    tracks = Track.objects.raw(tracks_query)
+    total_cost = 0
+    for track in tracks:
+        total_cost += track.unitprice
+    total_cost = float('%.2f'%total_cost) # truncate to 2 decimal places
+    data = (idnum, epl_obj.name, str(total_cost))
     if epl_cart:
         print("CART NOT EMPTY")
         epl_cart.append(data)
@@ -309,19 +316,18 @@ def add_epl_to_cart(request, idnum):
         request.session['epl_cart'] = list()
         epl_cart = request.session.get('epl_cart', None)
         epl_cart.append(data)
-
     request.session.modified = True
-    print("Cart contains:")
-    for item in epl_cart:
-        print(item)
+    print("EPL Cart contains:")
+    print(epl_cart)
     return HttpResponseRedirect("/view_cart/")
 
 @login_required
 def remove_epl_from_cart(request, idnum):
-    epl_cart = request.session.get('upl_cart', None)
-    if epl_cart[idnum]:
-        del epl_cart[idnum]
-    return view_cart(request)
+    epl_cart = request.session.get('epl_cart', None)
+    epl_cart = [(pid, name, price) for pid, name, price in epl_cart if pid != idnum]
+    request.session['epl_cart'] = epl_cart
+    request.session.modified = True
+    return HttpResponseRedirect("/view_cart/")    
 
 @login_required
 def search_playlists(request):

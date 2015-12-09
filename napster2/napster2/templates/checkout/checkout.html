@@ -82,7 +82,9 @@ Total price: ${{ total_price }}
   </form>
 {% endif %}
 
-{% if not show_confirm_button %}
+{% if person.affiliation == "Employee" %}
+  Employees cannot check out.
+{% elif not show_confirm_button %}
 You cannot check out your shopping cart because your information is not updated. Please make sure to update your email, postal code, city, country, and have at least one payment method. 
 {% endif %}
 
