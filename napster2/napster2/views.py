@@ -600,7 +600,7 @@ def add_tracks(request):
     if request.method == 'POST':
         form = AddTrack(request.POST)
         if form.is_valid():
-            print("Update is valid!")
+            print("Form is valid!")
 
             # Get the information from the fields
             trackname  = form.cleaned_data['trackname']
@@ -621,29 +621,29 @@ def add_tracks(request):
             mediatype_id = None
             mediatype_id_object = None
             # Get the information we need
-            artist_id_object = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
+            artist_id_object = Artist.objects.raw("SELECT * FROM Artist WHERE Name=%s", [artistname])
             if list(artist_id_object):
                 artist_id = list(artist_id_object)[0].artistid
-                album_id_object = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
+                album_id_object = Album.objects.raw("SELECT * FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
                 if list(album_id_object):
                     album_id = list(album_id_object)[0].albumid
-            genre_id_object = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])
+            genre_id_object = Genre.objects.raw("SELECT * FROM Genre WHERE Name=%s", [genrename])
             if list(genre_id_object):
                 genre_id = list(genre_id_object)[0].genreid
-            mediatype_id_object = Mediatype.objects.raw("SELECT MediaTypeId FROM MediaType WHERE Name=%s", [mediatype])
+            mediatype_id_object = Mediatype.objects.raw("SELECT * FROM MediaType WHERE Name=%s", [mediatype])
             if list(mediatype_id_object):
                 mediatype_id = list(mediatype_id_object)[0].mediatypeid
 
             # First, make sure that this track does not already exist. We treat a track with the same artist and album
             # This leaves open the possiblility for the same track name and artist on multiple albums, as you see with compilation albums or live albums
             if album_id != None:
+                print("AlbumID != NONE!")
                 track_exists = Track.objects.raw("SELECT TrackId FROM Track WHERE Name=%s AND AlbumId=%s", [trackname, album_id])
 
             #Handle the track existing
             if track_exists != None:
                 print("Track already exists!")
-                return render_to_response('addtracks/track_exists.html')
-
+                return add_tracks_exists(request)
             # Create relevant IDs, if they do not exist already
             else:
                 if not list(artist_id_object):
@@ -679,14 +679,10 @@ def add_tracks(request):
                 newtrack.save()
 
             print("Update was successful.")
-            return render_to_response('addtracks/success.html')
+            return add_tracks_success(request)
         else:
             print("Update was not valid.")
-            person = None
-            if request.user.is_authenticated():
-                person = Person.objects.get(username=request.user.get_username())
-            variables = RequestContext(request, {'person': person})
-            return render_to_response('addtracks/failure.html', variables,)
+            return add_tracks_failure(request)
     else:
         form = AddTrack()
         person = None
