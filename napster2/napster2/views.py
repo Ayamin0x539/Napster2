@@ -279,8 +279,6 @@ def search_playlists(request):
             query = "SELECT Playlist.PlaylistId, Playlist.Name from Track, Album, Playlist, Artist, PlaylistTrack, Genre where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.TrackId = PlaylistTrack.TrackId and Playlist.PlaylistId = PlaylistTrack.PlaylistId and Track.Name like \"%%" + trackname + "%%\" and Playlist.Name like \"%%" + playlistname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Genre.Name like \"%%" + genrename + "%%\" group by Name"
 
             result = Playlist.objects.raw(query)
-            for playlist in result:
-                print(playlist.name)
             person = None
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
@@ -736,6 +734,7 @@ def edit_upl(request, idnum):
         return render_to_response('MyPlaylist/edit_MyPlaylist.html', variables)
 
 def add_track_to_upl(request, uplidnum, trackidnum):
+    print("got into add")
     uplobj = Myplaylist.objects.get(myplaylistid = uplidnum)
     trackobj
     newUPLTrack = Myplaylisttracks(myplaylistid = uplobj, trackid = trackobj)
