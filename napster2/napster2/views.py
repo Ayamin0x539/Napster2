@@ -77,11 +77,51 @@ def logout_page(request):
 
 @login_required
 def dashboard(request):
+    if request.method == 'POST' and 'view_order_details' in request.POST:
+        orderid = request.POST['orderid']
+        return view_order_details(request, orderid)
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
-    variables = RequestContext(request, {'person': person, 'user': request.user})
-    return render_to_response('dashboard.html', variables,)
+    if person.affiliation == "Customer":
+        # Customer dashboard.
+        customer = Customer.objects.get(custpersonid=person.personid)
+        filled_orders_query = "SELECT * FROM `Order` WHERE CustomerID = '" + str(customer.customerid) + "' AND Confirmed = 't'"
+        filled_orders = Order.objects.raw(filled_orders_query)
+
+        unfilled_orders_query = "SELECT * FROM `Order` WHERE CustomerID = '" + str(customer.customerid) + "' AND Confirmed = 'f'"
+        unfilled_orders = Order.objects.raw(unfilled_orders_query)
+        variables = RequestContext(request, {'person': person, 'user': request.user, 'filled_orders': filled_orders, 'unfilled_orders': unfilled_orders})
+        return render_to_response('dashboard.html', variables,)
+    if person.affiliation == "Employee":
+        # Employee dashboard.
+        unfilled_orders_query = "SELECT * FROM `Order` WHERE Confirmed = 'f'"
+        unfilled_orders = Order.objects.raw(unfilled_orders_query)
+        variables = RequestContext(request, {'person': person, 'user': request.user,  'unfilled_orders': unfilled_orders})
+        return render_to_response('dashboard.html', variables,)
+
+@login_required
+def view_order_details(request, order_id):
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    order = Order.objects.get(orderid=order_id)
+    if order.playlistmadby is None:
+        # It's an order of tracks.
+        order_tracks_query = "SELECT * FROM Track, `Order`, OrderTrack where `Order`.OrderID = OrderTrack.OrderId AND OrderTrack.OrderTrackId = Track.TrackId AND `Order`.OrderID = '" + order_id + "'"
+        tracks = Track.objects.raw(order_tracks_query)
+        variables = RequestContext(request, {'person': person, 'order': order, 'tracks': tracks})
+        return render_to_response('orders/customer_view_order_details.html', variables,)        
+    if order.playlistmadby == "Customer":
+        # It's a customer-made playlist order.
+        cust_playlist_query = "SELECT * FROM MyPlaylist, `Order`, OrderCustPlaylist where `Order`.OrderID = OrderCustPlaylist.OrderCustID AND OrderCustPlaylist.CustPlaylistID = MyPlaylist.MyPlaylistID AND `Order`.OrderID = '" + order_id + "'"
+        playlists = MyPlaylist.objects.raw(cust_playlist_query)
+        variables = RequestContext(request, {'person': person, 'order': order, 'playlists': playlists})
+        return render_to_response('orders/customer_view_order_details.html', variables,)
+    if order.playlistmadby == "Employee":
+        # It's an employee-made playlist order.
+        variables = RequestContext(request, {'person': person, 'order': order})
+        return render_to_response('orders/customer_view_order_details.html', variables,)
 
 @login_required
 def view_cart(request):
@@ -344,7 +384,7 @@ def checkout(request):
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
-    show_confirm_button = person.email != "" and person.postalcode != "" and person.city != "" and person.country != "" and (person.creditcardnumber != "" or person.paypalemail != "" or person.googlepayid != "" or person.applepayid != "")
+    show_confirm_button = person.email != None and person.postalcode != None and person.city != None and person.country != None and (person.creditcardnumber != None or person.paypalemail != None or person.googlepayid != None or person.applepayid != None)
     variables = RequestContext(request, {'person': person, 'user': request.user, 'track_cart': track_cart, 'upl_cart': upl_cart, 'epl_cart': epl_cart, 'total_price': str(total_price), 'show_confirm_button': show_confirm_button})
     return render_to_response('checkout/checkout.html', variables,)
 
@@ -383,7 +423,7 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
             total_track += float(item[2][1:])
         total_track = float('%.2f'%(total_track))
         # Insert into Order.
-        order = Order(customerid=customer, price=str(total_track), dateentered=sql_date_obj)
+        order = Order(customerid=customer, price=str(total_track), dateentered=sql_date_obj, confirmed='f')
         order.save()
         # Insert into OrderTrack (m:n relationship). 
         # Need to insert each track.
@@ -399,7 +439,7 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
             total_upl += float(item[2][1:])
         total_upl = float('%.2f'%(total_upl))
         # Insert into Order.
-        order = Order(customerid=customer, playlistmadby="Customer",price=str(total_upl), dateentered=sql_date_obj)
+        order = Order(customerid=customer, playlistmadby="Customer",price=str(total_upl), dateentered=sql_date_obj, confirmed='f')
         order.save()
         # Insert into OrderCustPlaylist (m:n relationship).
         # Need to insert each playlist.
@@ -414,7 +454,7 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
             total_epl += float(item[2][1:])
         total_epl = float('%.2f'%(total_epl))
         # Insert into Order.
-        order = Order(customerid=customer.customerid, playlistmadby="Employee",price=str(total_upl), dateentered=sql_date_obj)
+        order = Order(customerid=customer.customerid, playlistmadby="Employee",price=str(total_upl), dateentered=sql_date_obj, confirmed='f')
         order.save()
         # Insert into OrderEmpPlaylist (m:n relationship).
         # Need to insert each playlist.
