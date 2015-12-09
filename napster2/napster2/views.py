@@ -518,10 +518,12 @@ def add_tracks(request):
                     newalbum = Album(title = albumname, artistid = artist_id_object)
                     newalbum.save()
                     album_id = newalbum.albumid
+                    album_id_object = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
                 if genre_id is None:
                     newgenre = Genre(name = genrename)
                     newgenre.save()
                     genre_id = newgenre.genreid
+                    genre_id_object = Genre.objects.raw("SELECT GenreId FROM Genre WHERE Name=%s", [genrename])[0]
                 if mediatype_id is None:
                     newmediatype = Mediatype(name = mediatype)
                     newmediatype.save()
