@@ -196,11 +196,8 @@ def add_upl_to_cart(request, idnum):
     else:
         print("CART EMPTY")
         request.session['upl_cart'] = list()
-        print("FUCK")
         upl_cart = request.session.get('upl_cart', None)
-        print("CART SHIT")
         upl_cart.append(data)
-    print("CART SHIT")
     request.session.modified = True
     print("Cart contains:")
     for item in upl_cart:
@@ -209,7 +206,7 @@ def add_upl_to_cart(request, idnum):
 
 @login_required
 def remove_item_from_cart(request, idnum):
-    if request.method=='POST' and 'remove_upl_from_cart' in request.POST:
+    if request.method=='POST' and 'remove_track' in request.POST:
         track_cart = request.session.get('track_cart', None)
         if track_cart[trackid]:
             del track_cart[trackid]
@@ -598,17 +595,14 @@ def view_MyPlaylist(request):
     result = Myplaylist.objects.raw(query)
     # make a new form for the next search
     if request.method == 'POST' and 'myplaylist' in request.POST and 'add_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
-        print("shit")
         playlist_name = request.POST['myplaylist']
         playlistid = request.POST['myplaylistid']
         return add_upl_to_cart(request, playlistid)
     elif request.method == 'POST' and 'myplaylist' in request.POST and 'view_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
-        print("fuck")
         playlist_name = request.POST['myplaylist']
         playlistid = request.POST['myplaylistid']
         return edit_upl(request, playlistid)
     elif request.method == 'POST' and 'create_upl' in request.POST:
-        print("damn")
         if form.is_valid():
             getcustomer = Customer.objects.get(custpersonid = person.personid)
             myplaylist = Myplaylist(name = form.cleaned_data['name'], customerid = getcustomer)
@@ -618,6 +612,8 @@ def view_MyPlaylist(request):
     return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
 
 def edit_upl(request, idnum):
+    query= "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, MyPlaylistTracks where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.TrackId = MyPlaylistTracks.TrackIDand MyPlaylistTracks.MyPlaylistID =" + str(idnum)
+    trackresult = Track.objects.raw(query)
     if request.method == 'POST' and 'track' in request.POST and 'add_track_upl' in request.POST:
         # We have a received a search.
         form = SearchForm(request.POST)
@@ -649,11 +645,13 @@ def edit_upl(request, idnum):
                 person = Person.objects.get(username=request.user.get_username())
             variables = RequestContext(request, {'person': person})
             return render_to_response('/search/failure.html', variables,)
-    elif request.method == 'POST' and 'item' in request.POST:
-        item_name = request.POST['item']
-        print("You are trying to add the item " + item_name + " to the cart!")
-        trackid = request.POST['trackid']
-        return add_track_to_cart(request, trackid)
+    elif request.method == 'POST' and 'searchtrackname' in request.POST:
+        track_name = request.POST['searchtrackname']
+        print("You are trying to add the item " + track_name + " to the playlist!")
+        trackid = request.POST['searchtrackid']
+        return add_track_to_upl(request, trackid, idnum)
+    elif request.method == 'POST' and 'playlisttrack' in request.POST:
+
     else:
         form = SearchForm()
         person = None
@@ -661,6 +659,13 @@ def edit_upl(request, idnum):
             person = Person.objects.get(username=request.user.get_username())
         variables = RequestContext(request, {'form': form, 'person': person})
         return render_to_response('MyPlaylist/edit_MyPlaylist.html', variables)
+
+def add_track_to_upl(request, uplidnum, trackidnum):
+    uplobj = Myplaylist.objects.get(myplaylistid = uplidnum)
+    trackobj
+    newUPLTrack = Myplaylisttracks(myplaylistid = uplobj, trackid = trackobj)
+    newUPLTrack.save()
+    return HttpResponseRedirect("/view_cart/")
 
 
 def edit_epl(request, idnum):

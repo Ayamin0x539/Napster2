@@ -4,6 +4,24 @@
 {% block content %}
 
 
+{% if trackresult != None %}
+<hr> 
+ <b> Playlist Contains</b><br />
+<hr> <br />
+  <table border="0">
+  {% for playlisttrack in tracksearchresult %}
+   <tr><th>
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_playlisttrackid" value="{{ playlisttrack.trackid }}" name="playlisttrackid" type="number" style="width:60px" readonly /> 
+    <input id="id_playlisttrackname" maxlength="40" value="{{ playlisttrack.name }}" name="playlisttrackname" type="text" style="width:300px" readonly />
+    <input id="id_artistname" maxlength="40" value="{{ playlisttrack.artistname }}" name="playlisttrackartistname" type="text" readonly />   
+    <input type="submit" name="remove_track_upl" value="Remove">
+    </form>
+   </td></tr>
+
+  {% endfor %}
+{% endif %}
+
 
 <b>Search to Add Tracks</b><br/>
 <form method="post" action=".">{% csrf_token %}
@@ -18,12 +36,12 @@
  <b> Search results:</b><br />
 <hr> <br />
   <table border="0">
-  {% for track in result %}
+  {% for searchtrack in tracksearchresult %}
    <tr><th>
     <form method="post" action=".">{% csrf_token %}
-    <input id="id_trackid" value="{{ track.trackid }}" name="trackid" type="number" style="width:60px" readonly /> 
-    <input id="id_item" maxlength="40" value="{{ track.name }}" name="item" type="text" style="width:300px" readonly />
-    <input id="id_artistname" maxlength="40" value="{{ track.artistname }}" name="artistname" type="text" readonly />   
+    <input id="id_searchtrackid" value="{{ searchtrack.trackid }}" name="searchtrackid" type="number" style="width:60px" readonly /> 
+    <input id="id_searchtrackname" maxlength="40" value="{{ searchtrack.name }}" name="searchtrackname" type="text" style="width:300px" readonly />
+    <input id="id_searchtrackartistname" maxlength="40" value="{{ searchtrack.artistname }}" name="searchtrackartistname" type="text" readonly />   
     <input type="submit" name="add_track_upl" value="Add to Playlist">
     </form>
    </td></tr>
