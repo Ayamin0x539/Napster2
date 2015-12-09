@@ -521,6 +521,7 @@ def add_tracks(request):
                     newmediatype.save()
                     mediatype_id = newmediatype.mediatypeid
                 # Finally, create the track
+                artist_id = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])[0]
                 album_id = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])[0]
                 newtrack = Track(
                     name=trackname,
