@@ -507,7 +507,7 @@ def add_tracks(request):
 
             # Create relevant IDs, if they do not exist already
             else:
-                if not list(artist_id):
+                if not list(artist_id_object):
                     newartist = Artist(name = artistname)
                     newartist.save()
                     artist_id = newartist.artistid
