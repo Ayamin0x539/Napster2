@@ -479,7 +479,9 @@ def add_tracks(request):
             album_id = None
             track_exists_object = None
             track_exists = None
+            genre_id = None
             genre_id_object = None
+            mediatype_id = None
             mediatype_id_object = None
             # Get the information we need
             artist_id_object = Artist.objects.raw("SELECT ArtistId FROM Artist WHERE Name=%s", [artistname])
