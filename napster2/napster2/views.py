@@ -588,14 +588,6 @@ def demographics(request):
     return render_to_response('demographics/demographics.html', locals())
 
 @login_required
-def manage_orders(request):
-    person = None
-    if request.user.is_authenticated():
-        person = Person.objects.get(username=request.user.get_username())
-    variables = RequestContext(request, {'person': person})
-    return render_to_response('orders/employee_order_management.html', variables,)
-
-@login_required
 def add_tracks(request):
     if request.method == 'POST':
         form = AddTrack(request.POST)

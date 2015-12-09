@@ -32,7 +32,6 @@ urlpatterns = [
     url(r'^checkout/failure/$', views.checkout_failure),
     url(r'^checkout/success/$', views.checkout_success),
     url(r'^demographics/$', views.demographics),
-    url(r'^ordermanagement/$', views.manage_orders),
     url(r'^addtracks/$', views.add_tracks),
     url(r'^addtracks/failure/$', views.add_tracks_failure),
     url(r'^addtracks/success/$', views.add_tracks_success),
