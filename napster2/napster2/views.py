@@ -597,7 +597,7 @@ def demographics(request):
             country = form.cleaned_data['country']
             fax = form.cleaned_data['fax']
             
-            query = "SELECT * FROM Person WHERE Person.Affiliation='Customer' AND Person.FirstName like \"%%" + firstname + "%%\" AND Person.LastName like \"%%" + lastname + "%%\" and Person.Phone like \"%%" + phonenum + "%%\" AND Person.Email like \"%%" + email + "%%\" AND Person.PostalCode like \"%%" + zipcode + "%%\" AND Person.Address like \"%%" + address + "%%\" AND Person.City like \"%%" + city + "%%\" AND Person.State like \"%%" + state + "%%\" AND Person.Country like \"%%" + country + "%%\" AND Person.Fax like \"%%" + fax + "%%\""
+            query = "SELECT * FROM Person WHERE Person.Affiliation='Customer' AND (Person.FirstName like \"%%" + firstname + "%%\" OR Person.FirstName is NULL) AND (Person.LastName like \"%%" + lastname + "%%\" OR Person.LastName is NULL) AND (Person.Phone like \"%%" + phonenum + "%%\" OR Person.Phone is NULL) AND (Person.Email like \"%%" + email + "%%\" OR Person.Email is NULL) AND (Person.PostalCode like \"%%" + zipcode + "%%\" OR Person.PostalCode is NULL) AND (Person.Address like \"%%" + address + "%%\" OR Person.Address is NULL) AND (Person.City like \"%%" + city + "%%\" OR Person.City is NULL) AND (Person.State like \"%%" + state + "%%\" OR Person.State is NULL) AND (Person.Country like \"%%" + country + "%%\" OR Person.Country is NULL) AND (Person.Fax like \"%%" + fax + "%%\" or Person.Fax is NULL)"
 
             result = Person.objects.raw(query)
             print("Found " + str(len(list(result))) + " results in search!")

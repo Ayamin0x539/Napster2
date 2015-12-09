@@ -22,11 +22,7 @@ Search for Customers: <br />
 <hr> 
  <b> Search results:</b><br />
 <hr> <br />
-
-{% for p_obj in result %}
-{{ p_obj.personid }}
-{% endfor %}
-  <table border="0">
+  <table border="1">
    <tr> <!-- 11 fields -->
      <th>ID</th>
      <th>First Name</th>
@@ -45,7 +41,7 @@ Search for Customers: <br />
      <td>{{ p.personid }}</td>
      <td>{{ p.firstname }}</td>
      <td>{{ p.lastname }}</td>
-     <td>{{ p.phone }}</td>
+     <td width="200">{{ p.phone }}</td>
      <td>{{ p.email }}</td>
      <td>{{ p.postalcode }}</td>
      <td>{{ p.address }}</td>
