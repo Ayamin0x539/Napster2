@@ -64,4 +64,14 @@ Items in order: <hr />
     {% endfor %}
   {% endif %}
 {% endif %}
+
+
+{% if person.affiliation == "Employee" %}
+<!-- Employees can approve orders. -->
+<form method="post" action=".">{% csrf_token %}
+<input id="id_orderid" value="{{ order.orderid }}" name="orderid" type="number" hidden="true" readonly />
+<input type="submit" name="approve" value="Approve Order">
+</form>
+{% endif %}
+
 {% endblock %}

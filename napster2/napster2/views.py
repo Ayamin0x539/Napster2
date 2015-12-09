@@ -78,8 +78,27 @@ def logout_page(request):
 @login_required
 def dashboard(request):
     if request.method == 'POST' and 'view_order_details' in request.POST:
+        # Customer/Employee has clicked on a button to view order details.
         orderid = request.POST['orderid']
         return view_order_details(request, orderid)
+    if request.method == 'POST' and 'approve' in request.POST:
+        # Employee has clicked on a button to approve this order.
+        request_approve_orderid = request.POST['orderid']
+        # Update Order table.
+        order = Order.objects.get(orderid=request_approve_orderid)
+        order.confirmed = 't'
+        order.save()
+        # Update Invoice table.
+        customer_id = order.customerid.customerid
+        customer = Customer.objects.get(customerid=customer_id)
+        person_c = Person.objects.get(personid=customer.custpersonid.personid)
+        # Get the current date and time.
+        now = datetime.datetime.now()
+        sql_date_obj = now.strftime('%Y-%m-%d %H:%M:%S')
+        invoice = Invoice(customerid=customer, invoicedate=sql_date_obj, billingaddress=person_c.address, billingcity=person_c.city, billingstate=person_c.state, billingcountry=person_c.country, billingpostalcode=person_c.postalcode, total=order.price)
+        invoice.save()
+        print("Saved order confirm.")
+        return HttpResponseRedirect('/dashboard/')
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
