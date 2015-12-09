@@ -63,7 +63,27 @@ Staff Picks: <br />
 <hr />
 Total price: ${{ total_price }}
 <hr />
-<form method="post" action=".">{% csrf_token %}
-<input type="submit" name="confirm" value="Confirm" />
-</form>
+
+{% if show_confirm_button and person.affiliation == "Customer" %}
+  <form method="post" action=".">{% csrf_token %}
+    {% if person.creditcardnumber != None %}
+      <input type="radio" name="payment_type" value="cc"> Credit Card <br />
+    {% endif %}
+    {% if person.paypalemail != None %}
+      <input type="radio" name="payment_type" value="pp"> Paypal <br />
+    {% endif %}
+    {% if person.googlepayid != None %}
+      <input type="radio" name="payment_type" value="gp"> Google Pay <br />
+    {% endif %}
+    {% if person.applepayid != None %}
+      <input type="radio" name="payment_type" value="ap"> Apple Pay <br />
+    {% endif %}
+      <input type="submit" name="confirm" value="Confirm" />
+  </form>
+{% endif %}
+
+{% if not show_confirm_button %}
+You cannot check out your shopping cart because your information is not updated. Please make sure to update your email, postal code, city, country, and have at least one payment method. 
+{% endif %}
+
 {% endblock %}
