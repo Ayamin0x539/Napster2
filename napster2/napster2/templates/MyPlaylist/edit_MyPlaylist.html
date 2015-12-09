@@ -9,21 +9,24 @@
  <b> Playlist Contains</b><br />
 <hr> <br />
   <table border="0">
-  {% for playlisttrack in tracksearchresult %}
+  {% for playlisttrack in trackresult %}
    <tr><th>
     <form method="post" action=".">{% csrf_token %}
     <input id="id_playlisttrackid" value="{{ playlisttrack.trackid }}" name="playlisttrackid" type="number" style="width:60px" readonly /> 
     <input id="id_playlisttrackname" maxlength="40" value="{{ playlisttrack.name }}" name="playlisttrackname" type="text" style="width:300px" readonly />
     <input id="id_artistname" maxlength="40" value="{{ playlisttrack.artistname }}" name="playlisttrackartistname" type="text" readonly />   
     <input type="submit" name="remove_track_upl" value="Remove">
+    <br/>
     </form>
    </td></tr>
 
   {% endfor %}
 {% endif %}
-
-
+<table></table>
+<br />
+<hr>
 <b>Search to Add Tracks</b><br/>
+<hr> 
 <form method="post" action=".">{% csrf_token %}
   <table border="0">
     {{ form.as_table }}

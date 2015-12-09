@@ -10,6 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.db import connection
 import time
 import datetime
 
@@ -668,9 +669,11 @@ def view_MyPlaylist(request):
         playlistid = request.POST['myplaylistid']
         return add_upl_to_cart(request, playlistid)
     elif request.method == 'POST' and 'myplaylist' in request.POST and 'view_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
-        playlist_name = request.POST['myplaylist']
-        playlistid = request.POST['myplaylistid']
-        return edit_upl(request, playlistid)
+        print(str(request.POST['myplaylistid']))
+        request.session['userplaylist'] = request.POST['myplaylistid']
+        print(str(request.session['userplaylist']))
+        request.session.modified = True
+        return HttpResponseRedirect("/edit_MyPlaylist/")
     elif request.method == 'POST' and 'create_upl' in request.POST:
         if form.is_valid():
             if form.cleaned_data['name'] != '':
@@ -681,11 +684,18 @@ def view_MyPlaylist(request):
     variables = RequestContext(request, {'form':form, 'result': result, 'person': person})
     return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
 
-def edit_upl(request, idnum):
-    query= "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, MyPlaylistTracks where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.TrackId = MyPlaylistTracks.TrackIDand MyPlaylistTracks.MyPlaylistID =" + str(idnum)
-    trackresult = Track.objects.raw(query)
-    if request.method == 'POST' and 'track' in request.POST and 'add_track_upl' in request.POST:
+def edit_upl(request):
+    trackresult = None
+    myplaylistid = request.session.get('userplaylist', None)
+    if myplaylistid != None:
+        query1= "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, MyPlaylistTracks where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.TrackId = MyPlaylistTracks.TrackID and MyPlaylistTracks.MyPlaylistID =" + myplaylistid
+        trackresult = Track.objects.raw(query1)
+        print("does this happen?")
+    else:
+        trackresult = None
+    if request.method == 'POST' and 'search_track' in request.POST:
         # We have a received a search.
+        print("now does this happen?")
         form = SearchForm(request.POST)
         if form.is_valid():
             print("Search form is valid!")
@@ -706,7 +716,7 @@ def edit_upl(request, idnum):
                 person = Person.objects.get(username=request.user.get_username())
             # make a new form for the next search
             form = SearchForm()
-            variables = RequestContext(request, {'tracksearchresult': tracksearchresult, 'person': person, 'form': form})
+            variables = RequestContext(request, {'tracksearchresult': tracksearchresult, 'person': person, 'form': form, 'trackresult':trackresult})
             return render_to_response('MyPlaylist/edit_MyPlaylist.html', variables,)
         else:
             print("Search form fields not valid.")
@@ -719,79 +729,33 @@ def edit_upl(request, idnum):
         track_name = request.POST['searchtrackname']
         print("You are trying to add the item " + track_name + " to the playlist!")
         trackid = request.POST['searchtrackid']
-        return add_track_to_upl(request, trackid, idnum)
-    elif request.method == 'POST' and 'playlisttrack' in request.POST:
-        track_name = request.POST['searchtrackname']
-        print("You are trying to add the item " + track_name + " to the playlist!")
-        trackid = request.POST['searchtrackid']
-        return add_track_to_upl(request, trackid, idnum) 
-    else:
-        form = SearchForm()
-        person = None
-        if request.user.is_authenticated():
-            person = Person.objects.get(username=request.user.get_username())
-        variables = RequestContext(request, {'form': form, 'person': person})
-        return render_to_response('MyPlaylist/edit_MyPlaylist.html', variables)
+        return add_track_to_upl(request, trackid)
+    elif request.method == 'POST' and 'remove_track_upl' in request.POST:
+        print("deleting?")
+        trackid = request.POST['playlisttrackid']
+        print(str(trackid))
+        print(str(myplaylistid))
+        trackobjid = Track.objects.get(trackid=trackid)
+        myplaylistobj = Myplaylist.objects.get(myplaylistid=myplaylistid)
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM MyPlaylistTracks WHERE MyPlaylistTracks.TrackId = %s and MyPlaylistTracks.TrackId =%s", [trackobjid.trackid, myplaylistobj.myplaylistid])
+    print("i guess this happens")
+    form = SearchForm()
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'form': form, 'person': person, 'trackresult':trackresult})
+    return render_to_response('MyPlaylist/edit_MyPlaylist.html', variables)
 
-def add_track_to_upl(request, uplidnum, trackidnum):
+
+def add_track_to_upl(request, trackidnum):
     print("got into add")
-    uplobj = Myplaylist.objects.get(myplaylistid = uplidnum)
-    trackobj
-    newUPLTrack = Myplaylisttracks(myplaylistid = uplobj, trackid = trackobj)
-    newUPLTrack.save()
-    return HttpResponseRedirect("/view_cart/")
-
-
-def edit_epl(request, idnum):
-    if request.method == 'POST' and 'track' in request.POST:
-        # We have a received a search.
-        form = SearchForm(request.POST)
-        if form.is_valid():
-            print("Search form is valid!")
-            result = None
-            trackname = form.cleaned_data['track']
-            albumname = form.cleaned_data['album']
-            artistname = form.cleaned_data['artist']
-            composername = form.cleaned_data['composer']
-            genrename = form.cleaned_data['genre']
-            medianame = form.cleaned_data['media']
-            
-            query = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
-
-            result = Track.objects.raw(query)
-
-            person = None
-            if request.user.is_authenticated():
-                person = Person.objects.get(username=request.user.get_username())
-            # make a new form for the next search
-            form = SearchForm()
-            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
-            return render_to_response('search/search.html', variables,)
-        else:
-            print("Search form fields not valid.")
-            person = None
-            if request.user.is_authenticated():
-                person = Person.objects.get(username=request.user.get_username())
-            variables = RequestContext(request, {'person': person})
-            return render_to_response('/search/failure.html', variables,)
-    elif request.method == 'POST' and 'item' in request.POST:
-        item_name = request.POST['item']
-        print("You are trying to add the item " + item_name + " to the cart!")
-        trackid = request.POST['trackid']
-        return add_track_to_cart(request, trackid)
-    else:
-        form = SearchForm()
-        person = None
-        if request.user.is_authenticated():
-            person = Person.objects.get(username=request.user.get_username())
-        variables = RequestContext(request, {'form': form, 'person': person})
-        return render_to_response('search/search.html', variables)
-
-
-"""
-@login_required
-def e_MyPlaylist(request, myplaylistid):
-
-@login_required
-def edit_Playlist(request):
-"""
+    myplaylistid = request.session['userplaylist']
+    print(str(myplaylistid))
+    if myplaylistid != None:
+        print("do i add?")
+        uplobj = Myplaylist.objects.get(myplaylistid = myplaylistid)
+        trackobj = Track.objects.get(trackid= trackidnum)
+        newUPLTrack = Myplaylisttracks(myplaylistid = uplobj, trackid = trackobj)
+        newUPLTrack.save()
+    return HttpResponseRedirect("/edit_MyPlaylist/")
