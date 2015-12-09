@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}View Order{% endblock %}
+{% block head %}Order Details{% endblock %}
+{% block content %}
+
+<hr />
+<!-- ID -->
+Order ID: {{ order.orderid }} <br />
+<!-- STATUS -->
+Status: 
+{% if order.confirmed == "t" %}
+Completed
+{% else %}
+Pending
+{% endif %}
+<br />
+
+<!-- TYPE -->
+Type of order: 
+{% if order.playlistmadby == None %}
+Tracks
+{% endif %}
+{% if order.playlistmadby == "Customer" %}
+Customer-Made Playlist
+{% endif %}
+{% if order.playlistmadby == "Employee" %}
+Employee-Made Playlist
+{% endif %}
+<hr />
+Items in order: <hr />
+
+<!-- Inner-order information (tracks, playlists) -->
+
+<!-- Track orders. -->
+{% if order.playlistmadby == None %}
+  {% if tracks != None %}
+    {% for track in tracks %}
+      <u>Track ID:</u> {{ track.trackid }} <br />
+      <u>Name:</u> {{ track.name }} <br />
+      <u>Price:</u> {{ track.unitprice }}
+      <hr />
+    {% endfor %}
+  {% endif %}
+{% endif %}
+
+<!-- Customer-made playlists order. -->
+{% if order.playlistmadby == "Customer" %}
+  {% if playlists != None %}
+    {% for playlist in playlists %}
+      <u>Playlist ID:</u> {{ playlist.myplaylistid }} <br />
+      <u>Name: </u> {{ playlist.name }}
+      <hr />
+    {% endfor %}
+  {% endif %}
+{% endif %}
+
+<!-- Employee-made playlists order. -->
+{% if order.playlistmadby == "Employee" %}
+  {% if playlists != None %}
+    {% for playlist in playlists %}
+      <u>Playlist ID:</u> {{ playlist.myplaylistid }} <br />
+      <u>Name: </u> {{ playlist.name }}
+      <hr />
+    {% endfor %}
+  {% endif %}
+{% endif %}
+{% endblock %}

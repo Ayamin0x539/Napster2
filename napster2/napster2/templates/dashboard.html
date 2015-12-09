@@ -2,10 +2,70 @@
 {% block title %}Napster 2 Dashboard{% endblock %}
 {% block head %}Dashboard{% endblock %}
 {% block content %}
-<p>You are currently logged in as {{ user.username }}. This is the dashboard.</p>
 
-<p> 
-  Group: We need a way to tell whether we're a customer, employee, or admin.
-</p>
+{% if person.affiliation == "Customer" %}
+Welcome, customer! <br />
+<!-- Customer dashboard. -->
+Unfilled orders: <br />
+{% if unfilled_orders %}
+<table border="0">
+  {% for order in unfilled_orders %}
+   <tr><th>
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_orderid" value="{{ order.orderid }}" name="orderid" type="number" style="width:60px" readonly />
+    <input id="id_date" maxlength="40" value="{{ order.dateentered }}" name="orderdate" type="text" readonly />
+    <input id="id_price" value="${{ order.price }}" name="price" type="text" style="width:60px" readonly />
+    <input type="submit" name="view_order_details" value="View Details">
+    </form>
+    </td></tr>
+  {% endfor %}
+</table>
+{% else %}
+-none-<br />
+{% endif %}
+
+Filled orders: <br />
+{% if filled_orders %}
+<table border="0">
+  {% for order in filled_orders %}
+   <tr><th>
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_orderid" value="{{ order.orderid }}" name="orderid" type="number" style="width:60px" readonly />
+    <input id="id_date" maxlength="40" value="{{ order.dateentered }}" name="orderdate" type="text" readonly />
+    <input id="id_price" value="${{ order.price }}" name="price" type="text" style="width:60px" readonly />
+    <input type="submit" name="view_order_details" value="View Details">
+    </form>
+    </td></tr>
+  {% endfor %}
+</table>
+{% else %}
+-none-<br />
+{% endif %}
+
+{% endif %}
+
+{% if person.affiliation == "Employee" %}
+Welcome, employee!
+<!-- Employee dashboard. -->
+Unfilled orders: <br />
+{% if unfilled_orders %}
+<table border="0">
+  {% for order in unfilled_orders %}
+   <tr><th>
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_orderid" value="{{ order.orderid }}" name="orderid" type="number" style="width:60px" readonly />
+    <input id="id_date" maxlength="40" value="{{ order.dateentered }}" name="orderdate" type="text" readonly />
+    <input id="id_customerid" value="{{ order.customerid }}" name="customerid" type="number" style="width:60px" readonly />
+    <input id="id_price" value="${{ order.price }}" name="price" type="text" style="width:60px" readonly />
+    <input type="submit" name="view_order_details" value="View Details">
+    </form>
+    </td></tr>
+  {% endfor %}
+</table>
+{% else %}
+-none-<br />
+{% endif %}
+{% endif %}
+
 
 {% endblock %}

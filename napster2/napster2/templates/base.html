@@ -17,7 +17,9 @@
     <a href="/view_cart/">View Cart</a> | 
     <a href="/search/">Track Search</a> |
     <a href="/search_playlists/">Playlist Search</a> |
+    {% if person.affiliation != "Employee" and person.affiliation != "Administrator" %}
     <a href="/view_MyPlaylist/">My Playlists</a> |
+    {% endif %}
     {% if person.affiliation == "Employee" or person.affiliation == "Administrator" %}
     <a href="/demographics/">Demographics</a> | 
     <a href="/ordermanagement/">Order Management</a> | 
