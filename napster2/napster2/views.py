@@ -342,11 +342,11 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
     # Price is in the form "$2.99", so we will strip the first char, the $.
     # then convert it to int.
     for item in track_cart:
-        total += int(item[2][1:])
+        total += float(item[2][1:])
     for item in upl_cart:
-        total += int(item[2][1:])
+        total += float(item[2][1:])
     for item in epl_cart:
-        total += int(item[2][1:])
+        total += float(item[2][1:])
     print("The total price of all the items is " + total)
     person = None
     if request.user.is_authenticated():
