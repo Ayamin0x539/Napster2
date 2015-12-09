@@ -49,6 +49,8 @@ Staff Picks: <br />
 </table>
 {% endif %}
 
+<form method="post" action=".">{% csrf_token %}
 <input type="submit" name="checkout" value="Checkout">
+</form>
     
 {% endblock %}

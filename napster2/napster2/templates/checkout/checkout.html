@@ -3,7 +3,11 @@
 {% block head %}Checkout{% endblock %}
 {% block content %}
 
+We need to print out the shopping cart again with the total price.
 
+Confirmation will lead to checkout success.
 
-<input type="submit" value="Checkout" />
+<form method="post" action=".">{% csrf_token %}
+<input type="submit" name="confirm" value="Confirm" />
+</form>
 {% endblock %}
