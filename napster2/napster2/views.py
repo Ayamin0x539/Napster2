@@ -518,7 +518,7 @@ def add_tracks(request):
                     newalbum = Album(title = albumname, artistid = artist_id_object)
                     newalbum.save()
                     album_id = newalbum.albumid
-                    album_id_object = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])
+                    album_id_object = Album.objects.raw("SELECT AlbumId FROM Album WHERE Title=%s AND ArtistId=%s", [albumname, artist_id])[0]
                 if genre_id is None:
                     newgenre = Genre(name = genrename)
                     newgenre.save()
