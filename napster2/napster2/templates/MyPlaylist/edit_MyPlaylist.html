@@ -4,14 +4,16 @@
 {% block content %}
 
 
+
+<b>Search to Add Tracks</b><br/>
 <form method="post" action=".">{% csrf_token %}
   <table border="0">
     {{ form.as_table }}
   </table>
-<input type="submit" value="Search" />
+<input type="submit" name="search_track" value="Search" />
 </form>
 
-{% if trackresult != None %}
+{% if tracksearchresult != None %}
 <hr> 
  <b> Search results:</b><br />
 <hr> <br />
@@ -22,7 +24,7 @@
     <input id="id_trackid" value="{{ track.trackid }}" name="trackid" type="number" style="width:60px" readonly /> 
     <input id="id_item" maxlength="40" value="{{ track.name }}" name="item" type="text" style="width:300px" readonly />
     <input id="id_artistname" maxlength="40" value="{{ track.artistname }}" name="artistname" type="text" readonly />   
-    <input type="submit" value="Add To Cart">
+    <input type="submit" name="add_track_upl" value="Add to Playlist">
     </form>
    </td></tr>
 

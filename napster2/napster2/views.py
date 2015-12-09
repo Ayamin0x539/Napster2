@@ -193,14 +193,16 @@ def add_upl_to_cart(request, idnum):
     else:
         print("CART EMPTY")
         request.session['upl_cart'] = list()
+        print("FUCK")
         upl_cart = request.session.get('upl_cart', None)
+        print("CART SHIT")
         upl_cart.append(data)
-
+    print("CART SHIT")
     request.session.modified = True
     print("Cart contains:")
     for item in upl_cart:
         print(item)
-    return view_cart(request)
+    return HttpResponseRedirect("/view_cart/")
 
 @login_required
 def remove_item_from_cart(request, idnum):
@@ -250,7 +252,7 @@ def add_epl_to_cart(request, idnum):
     print("Cart contains:")
     for item in epl_cart:
         print(item)
-    return view_cart(request)
+    return HttpResponseRedirect("/view_cart/")
 
 @login_required
 def remove_epl_from_cart(request, idnum):
@@ -583,18 +585,27 @@ def view_MyPlaylist(request):
     result = Myplaylist.objects.raw(query)
     # make a new form for the next search
     if request.method == 'POST' and 'myplaylist' in request.POST and 'add_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
+        print("shit")
         playlist_name = request.POST['myplaylist']
         playlistid = request.POST['myplaylistid']
         return add_upl_to_cart(request, playlistid)
     elif request.method == 'POST' and 'myplaylist' in request.POST and 'view_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
+        print("fuck")
         playlist_name = request.POST['myplaylist']
         playlistid = request.POST['myplaylistid']
         return edit_upl(request, playlistid)
+    elif request.method == 'POST' and 'create_upl' in request.POST:
+        print("damn")
+        if form.is_valid():
+            getcustomer = Customer.objects.get(custpersonid = person.personid)
+            myplaylist = Myplaylist(name = form.cleaned_data['name'], customerid = getcustomer)
+            myplaylist.save()
+            form= MyPlaylistCreateForm()
     variables = RequestContext(request, {'form':form, 'result': result, 'person': person})
     return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
 
 def edit_upl(request, idnum):
-    if request.method == 'POST' and 'track' in request.POST:
+    if request.method == 'POST' and 'track' in request.POST and 'add_track_upl' in request.POST:
         # We have a received a search.
         form = SearchForm(request.POST)
         if form.is_valid():
@@ -607,16 +618,16 @@ def edit_upl(request, idnum):
             genrename = form.cleaned_data['genre']
             medianame = form.cleaned_data['media']
             
-            query = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
+            query2 = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
 
-            result = Track.objects.raw(query)
+            tracksearchresult = Track.objects.raw(query2)
 
             person = None
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
             # make a new form for the next search
             form = SearchForm()
-            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
+            variables = RequestContext(request, {'tracksearchresult': tracksearchresult, 'person': person, 'form': form})
             return render_to_response('MyPlaylist/edit_MyPlaylist.html', variables,)
         else:
             print("Search form fields not valid.")
@@ -687,7 +698,7 @@ def edit_epl(request, idnum):
 
 """
 @login_required
-def edit_MyPlaylist(request, myplaylistid):
+def e_MyPlaylist(request, myplaylistid):
 
 @login_required
 def edit_Playlist(request):
