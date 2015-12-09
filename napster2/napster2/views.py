@@ -580,12 +580,50 @@ def employee_productivity_Report(request):
 def demographics(request):
     customer_numbers = Person.objects.all().count()
     customer_country_numbers = Person.objects.values('country').distinct().count()
-    person = None
-    if request.user.is_authenticated():
-        person = Person.objects.get(username=request.user.get_username())
-#    variables = RequestContext(request, {'person': person})
-    user = request.user
-    return render_to_response('demographics/demographics.html', locals())
+    if request.method == 'POST' and 'search' in request.POST:
+        # We have a received a search.
+        form = DemographicsForm(request.POST)
+        if form.is_valid():
+            print("Search form is valid!")
+            result = None
+            firstname = form.cleaned_data['firstname']
+            lastname = form.cleaned_data['lastname']
+            phonenum = form.cleaned_data['phone']
+            email = form.cleaned_data['email']
+            zipcode = form.cleaned_data['postalcode']
+            address = form.cleaned_data['address']
+            city = form.cleaned_data['city']
+            state = form.cleaned_data['state']
+            country = form.cleaned_data['country']
+            fax = form.cleaned_data['fax']
+            
+            query = "SELECT * FROM Person WHERE Person.Affiliation='Customer' AND Person.FirstName like \"%%" + firstname + "%%\" AND Person.LastName like \"%%" + lastname + "%%\" and Person.Phone like \"%%" + phonenum + "%%\" AND Person.Email like \"%%" + email + "%%\" AND Person.PostalCode like \"%%" + zipcode + "%%\" AND Person.Address like \"%%" + address + "%%\" AND Person.City like \"%%" + city + "%%\" AND Person.State like \"%%" + state + "%%\" AND Person.Country like \"%%" + country + "%%\" AND Person.Fax like \"%%" + fax + "%%\""
+
+            result = Person.objects.raw(query)
+            print("Found " + str(len(list(result))) + " results in search!")
+
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            # make a new form for the next search
+            form = DemographicsForm()
+            variables = RequestContext(request, {'result': result, 'person': person, 'form': form, 'customer_country_numbers': customer_country_numbers, 'customer_numbers': customer_numbers})
+            return render_to_response('demographics/demographics.html', variables,)
+        else:
+            print("Search form fields not valid.")
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person, 'customer_country_numbers': customer_country_numbers, 'customer_numbers': customer_numbers})
+            return render_to_response('/demographics/failure.html', variables,)
+    else:
+        print("GET request on demographics")
+        form = DemographicsForm()
+        person = None
+        if request.user.is_authenticated():
+            person = Person.objects.get(username=request.user.get_username())
+        variables = RequestContext(request, {'form': form, 'person': person, 'customer_country_numbers': customer_country_numbers, 'customer_numbers': customer_numbers})
+        return render_to_response('demographics/demographics.html', variables,)
 
 @login_required
 def add_tracks(request):

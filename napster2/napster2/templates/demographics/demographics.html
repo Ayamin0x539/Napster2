@@ -3,11 +3,59 @@
 {% block head %}Demographics{% endblock %}
 {% block content %}
 
-<p>You are currently logged in as {{ user.username }}. This is the employee demographics view.</p>
-
+<p>This is the employee demographics view.</p>
 
 <p>
 We currently serve {{ customer_numbers }} customers in {{ customer_country_numbers }} different countries.
 </p>
+
+Search for Customers: <br />
+
+<form method="post" action=".">{% csrf_token %}
+  <table border="0">
+    {{ form.as_table }}
+  </table>
+<input type="submit" name="search"  value="Search" />
+</form>
+
+{% if result != None %}
+<hr> 
+ <b> Search results:</b><br />
+<hr> <br />
+
+{% for p_obj in result %}
+{{ p_obj.personid }}
+{% endfor %}
+  <table border="0">
+   <tr> <!-- 11 fields -->
+     <th>ID</th>
+     <th>First Name</th>
+     <th>Last Name</th>
+     <th>Phone</th>
+     <th>Email</th>
+     <th>ZipCode</th>
+     <th>Address</th>
+     <th>City</th>
+     <th>State</th>
+     <th>Country</th>
+     <th>Fax</th>
+   </tr>
+  {% for p in result %}
+   <tr>
+     <td>{{ p.personid }}</td>
+     <td>{{ p.firstname }}</td>
+     <td>{{ p.lastname }}</td>
+     <td>{{ p.phone }}</td>
+     <td>{{ p.email }}</td>
+     <td>{{ p.postalcode }}</td>
+     <td>{{ p.address }}</td>
+     <td>{{ p.city }}</td>
+     <td>{{ p.state }}</td>
+     <td>{{ p.country }}</td>
+     <td>{{ p.fax }}</td>
+   </tr>
+  {% endfor %}
+   </table>
+{% endif %}
 
 {% endblock %}

@@ -88,4 +88,16 @@ class MyPlaylistCreateForm(forms.Form):
     name = forms.CharField(label='My Playlist Name', max_length=40, required=False)        
 
 class PlaylistCreateForm(forms.Form):
-    name = forms.CharField(label='Playlist Name', max_length=40, required=False)        
+    name = forms.CharField(label='Playlist Name', max_length=40, required=False) 
+class DemographicsForm(forms.Form):
+#    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
+    firstname = forms.CharField(label='First Name', max_length=40, required=False)
+    lastname = forms.CharField(label='Last Name', max_length=20, required=False)
+    phone = forms.CharField(label='Phone Number', max_length=60, required=False)
+    email = forms.CharField(label='Email', max_length=30, required=False)
+    postalcode = forms.CharField(label='Zip/Postal Code', max_length=10, required=False)
+    address = forms.CharField(label='Address', max_length = 70, required=False)
+    city = forms.CharField(label='City', max_length=40, required=False)
+    state = forms.CharField(label='State', max_length=40, required=False)
+    country = forms.CharField(label='Country', max_length=45, required=False)
+    fax = forms.CharField(label='Fax', max_length=45, required=False)
