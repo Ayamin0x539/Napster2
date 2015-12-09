@@ -335,7 +335,6 @@ def search_playlists(request):
             return render_to_response('/search/failure.html', variables,)
     elif request.method == 'POST' and 'playlist' in request.POST:
         playlist_name = request.POST['playlist']
-        print("You are trying to add the item " + playlist_name + " to the cart!")
         playlistid = request.POST['playlistid']
         return add_epl_to_cart(request, playlistid)
     else:
@@ -714,10 +713,11 @@ def view_MyPlaylist(request):
         return edit_upl(request, playlistid)
     elif request.method == 'POST' and 'create_upl' in request.POST:
         if form.is_valid():
-            getcustomer = Customer.objects.get(custpersonid = person.personid)
-            myplaylist = Myplaylist(name = form.cleaned_data['name'], customerid = getcustomer)
-            myplaylist.save()
-            form= MyPlaylistCreateForm()
+            if form.cleaned_data['name'] != '':
+                getcustomer = Customer.objects.get(custpersonid = person.personid)
+                myplaylist = Myplaylist(name = form.cleaned_data['name'], customerid = getcustomer)
+                myplaylist.save()
+                form= MyPlaylistCreateForm()
     variables = RequestContext(request, {'form':form, 'result': result, 'person': person})
     return render_to_response('MyPlaylist/view_MyPlaylist.html', variables,)
 
