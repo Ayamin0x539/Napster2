@@ -88,7 +88,8 @@ class MyPlaylistCreateForm(forms.Form):
     name = forms.CharField(label='My Playlist Name', max_length=40, required=False)        
 
 class PlaylistCreateForm(forms.Form):
-    name = forms.CharField(label='Playlist Name', max_length=40, required=False) 
+    name = forms.CharField(label='Playlist Name', max_length=40, required=False)        
+
 class DemographicsForm(forms.Form):
 #    password1 = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
     firstname = forms.CharField(label='First Name', max_length=40, required=False)

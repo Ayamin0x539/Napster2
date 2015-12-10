@@ -120,7 +120,8 @@ def dashboard(request):
         variables = RequestContext(request, {'person': person, 'user': request.user,  'unfilled_orders': unfilled_orders})
         return render_to_response('dashboard.html', variables,)
 
-@login_required
+
+
 def view_order_details(request, order_id):
     person = None
     if request.user.is_authenticated():
@@ -594,7 +595,7 @@ def sales_reporting(request):
             firstname = form.cleaned_data['firstname']
             lastname = form.cleaned_data['lastname']
                 
-            orders_query = "SELECT * from Person, `Order`, Customer where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = Order.CustomerID and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
+            orders_query = "SELECT * from Person, `Order`, Customer where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = Order.CustomerID and `Order`.Confirmed = 't' and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
             
             if month != "":
                 orders_query += " and `Order`.DateEntered like \"%%-" + month + "-%%\""
@@ -607,7 +608,7 @@ def sales_reporting(request):
             num_orders_found = str(len(list(orders_found)))
             print("Number of orders found: " + num_orders_found)
 
-            tracks_query = "SELECT * from Person, `Order`, Customer, OrderTrack, Track where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = `Order`.CustomerID and OrderTrack.OrderId = `Order`.OrderID and OrderTrack.OrderTrackId = Track.TrackId and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
+            tracks_query = "SELECT * from Person, `Order`, Customer, OrderTrack, Track where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = `Order`.CustomerID and OrderTrack.OrderId = `Order`.OrderID and OrderTrack.OrderTrackId = Track.TrackId and `Order`.Confirmed = 't' and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
 
             if begin_date != "":
                 tracks_query +=  "and `Order`.DateEntered >= " + begin_date
@@ -621,7 +622,7 @@ def sales_reporting(request):
             total_price = 0
             for order in orders_found:
                 total_price += float(order.price)
-            total_price = str(total_price)
+            total_price = float('%.2f'%total_price)
 
             person = None
             if request.user.is_authenticated():

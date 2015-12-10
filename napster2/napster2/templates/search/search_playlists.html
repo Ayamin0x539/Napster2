@@ -1,13 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Search Playlists{% endblock %}
-{% block head %}Search Playlists{% endblock %}
+{% block title %} Playlists{% endblock %}
+{% block head %} Playlists{% endblock %}
 {% block content %}
+
+{% if person.affiliation == "Employee" or person.affiliation == "Administrator" %}
+<hr> 
+ <b> Add Employee Playlist</b><br />
+<hr> <br />
+
+<form method="post" action=".">{% csrf_token %}
+  <table border="0">
+    {{ addform.as_table }}
+  </table>
+<input type="submit" name="add_epl" value="Add Playlist" />
+</form>
+{% endif %}
+
+<hr> 
+ <b> Search Employee Playlists Playlist</b><br />
+<hr> <br />
 
 <form method="post" action=".">{% csrf_token %}
   <table border="0">
     {{ form.as_table }}
   </table>
-<input type="submit" value="Search" />
+<input type="submit" name="search" value="Search" />
 </form>
 
 {% if result != None %}
@@ -20,8 +37,10 @@
     <form method="post" action=".">{% csrf_token %}
     <input id="id_playlistid" value="{{ playlist.playlistid }}" name="playlistid" type="number" style="width:60px" readonly /> 
     <input id="id_playlist" maxlength="40" value="{{ playlist.name }}" name="playlist" type="text" style="width:300px" readonly />
-    <input type="submit" name="view_playlist" value="View Details">
+    <input type="submit" name="view_playlist" value="Edit Details">
+    {% if person.affiliation == "Customer" %}
     <input type="submit" name="add_playlist" value="Add To Cart">
+    {% endif %}
     </form>
    </td></tr>
 
