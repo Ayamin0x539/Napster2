@@ -416,7 +416,14 @@ def checkout(request):
     epl_cart = request.session.get('epl_cart', None)
     if request.method == 'POST':
         null_check = track_cart is None and upl_cart is None and epl_cart is None
-        if null_check or (len(track_cart) == 0 and len(upl_cart) == 0 and len(epl_cart) == 0):
+        empty_check = True
+        if track_cart is not None and len(track_cart) !=0:
+            empty_check = False
+        if upl_cart is not None and len(upl_cart) != 0:
+            empty_check = False
+        if epl_cart is not None and len(epl_cart) != 0:
+            empty_check = False
+        if null_check or empty_check:
             # either null or empty shopping carts. can't check out.
             return HttpResponseRedirect('/checkout/failure/')
         if 'confirm' in request.POST:
@@ -440,9 +447,11 @@ def checkout(request):
     if epl_cart:
         # Calculate price.
         for item in epl_cart:
+            print(item[2][1:])
             total_price += float(item[2][1:])
 
-    total_price = float('%.2f'%total_price)
+    total_price = str(float('%.2f'%total_price))
+    print("Total price: " + total_price)
     person = None
     if request.user.is_authenticated():
         person = Person.objects.get(username=request.user.get_username())
@@ -526,7 +535,6 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
             playlist = Playlist.objects.get(playlistid=playlist_id)
             orderempplaylist = Orderempplaylist(orderempid=order, empplaylistid=playlist)
             orderempplaylist.save()
-
     variables = RequestContext(request, {'person': person})
     return render_to_response('checkout/success.html', variables,)
 

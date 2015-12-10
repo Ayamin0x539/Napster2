@@ -16,7 +16,6 @@ Tracks: <br />
     <input id="id_trackid" value="{{ tuple.0 }}" name="trackid" type="number" style="width:60px" readonly />
     <input id="id_item" maxlength="40" value="{{ tuple.1 }}" name="track" type="text" readonly />
     <input id="id_price" value="${{ tuple.2 }}" name="price" type="text" style="width:60px" readonly />
-    <input type="submit" name="remove_track" value="Remove From Cart">
     </form>
     </td></tr>
   {% endfor %}
@@ -34,7 +33,6 @@ User Playlists: <br />
     <input id="id_myplaylistid" value="{{ tuple.0 }}" name="myplaylistid" type="number" style="width:60px" readonly />
     <input id="id_myplaylist" maxlength="40" value="{{ tuple.1 }}" name="myplaylist" type="text" readonly />
     <input id="id_price" value="${{ tuple.2 }}" name="price" type="text" style="width:60px" readonly />
-    <input type="submit" name="remove_myplaylist" value="Remove From Cart">
     </form>
     </td></tr>
   {% endfor %}
@@ -52,7 +50,6 @@ Staff Picks: <br />
     <input id="id_playlistid" value="{{ tuple.0 }}" name="playlistid" type="number" style="width:60px" readonly />
     <input id="id_playlist" maxlength="40" value="{{ tuple.1 }}" name="playlist" type="text" readonly />
     <input id="id_price" value="${{ tuple.2 }}" name="price" type="text" style="width:60px" readonly />
-    <input type="submit" name="remove_playlist" value="Remove From Cart">
     </form>
     </td></tr>
   {% endfor %}
