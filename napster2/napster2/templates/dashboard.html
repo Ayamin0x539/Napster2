@@ -6,6 +6,13 @@
 {% if person.affiliation == "Customer" %}
 Welcome, customer! <br />
 <!-- Customer dashboard. -->
+<form method="post" action=".">{% csrf_token %}
+  <table border="0">
+    {{ qsform.as_table }}
+  </table>
+<input type="submit" name="quicksearch" value="Search" />
+</form>
+
 Unfilled orders: <br />
 {% if unfilled_orders %}
 <table border="0">

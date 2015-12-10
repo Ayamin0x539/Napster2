@@ -78,6 +78,9 @@ def logout_page(request):
 
 @login_required
 def dashboard(request):
+    if request.method == 'POST' and 'quicksearch' in request.POST:
+        # Customer chose to quick search.
+        return search(request)
     if request.method == 'POST' and 'view_order_details' in request.POST:
         # Customer/Employee has clicked on a button to view order details.
         orderid = request.POST['orderid']
@@ -111,7 +114,11 @@ def dashboard(request):
 
         unfilled_orders_query = "SELECT * FROM `Order` WHERE CustomerID = '" + str(customer.customerid) + "' AND Confirmed = 'f'"
         unfilled_orders = Order.objects.raw(unfilled_orders_query)
-        variables = RequestContext(request, {'person': person, 'user': request.user, 'filled_orders': filled_orders, 'unfilled_orders': unfilled_orders})
+        
+        # Quick search form
+        qsform = QuickSearchForm()
+
+        variables = RequestContext(request, {'person': person, 'user': request.user, 'filled_orders': filled_orders, 'unfilled_orders': unfilled_orders, 'qsform': qsform})
         return render_to_response('dashboard.html', variables,)
     if person.affiliation == "Employee" or person.affiliation == "Administrator":
         # Employee dashboard.
@@ -180,7 +187,30 @@ def view_cart(request):
 
 @login_required
 def search(request):
-    if request.method == 'POST' and 'track' in request.POST:
+    # Quick Search
+    if request.method == 'POST' and 'quicksearch' in request.POST: 
+        form = QuickSearchForm(request.POST)
+        if form.is_valid():
+            print("Search form is valid!")
+            result = None
+            artistname = form.cleaned_data['artist']
+            medianame = form.cleaned_data['media']
+            
+            query = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Artist.Name like \"%%" + artistname + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
+
+            result = Track.objects.raw(query)
+            print("Found " + str(len(list(result))) + " results in search!")
+
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            # make a new form for the next search
+            form = SearchForm()
+            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
+            return render_to_response('search/search.html', variables,)
+
+    # Regular Search
+    if request.method == 'POST' and 'search' in request.POST:
         # We have a received a search.
         form = SearchForm(request.POST)
         if form.is_valid():
