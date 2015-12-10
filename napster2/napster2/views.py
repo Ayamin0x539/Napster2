@@ -359,10 +359,14 @@ def search_playlists(request):
                 person = Person.objects.get(username=request.user.get_username())
             variables = RequestContext(request, {'person': person})
             return render_to_response('/search/failure.html', variables,)
-    elif request.method == 'POST' and 'playlist' in request.POST:
+    elif request.method == 'POST' and 'add_playlist' in request.POST:
         playlist_name = request.POST['playlist']
         playlistid = request.POST['playlistid']
         return add_epl_to_cart(request, playlistid)
+    elif request.method == 'POST' and 'view_playlist' in request.POST:
+        request.session['eplplaylist'] = request.POST['playlistid']
+        request.session.modified = True
+        return HttpResponseRedirect("/playlist_details/")
     else:
         form = PlaylistSearchForm()
         person = None
@@ -802,9 +806,7 @@ def view_MyPlaylist(request):
         playlistid = request.POST['myplaylistid']
         return add_upl_to_cart(request, playlistid)
     elif request.method == 'POST' and 'myplaylist' in request.POST and 'view_myplaylist' in request.POST:# in request.POST and 'add_myplaylist'in request.POST:
-        print(str(request.POST['myplaylistid']))
         request.session['userplaylist'] = request.POST['myplaylistid']
-        print(str(request.session['userplaylist']))
         request.session.modified = True
         return HttpResponseRedirect("/edit_MyPlaylist/")
     elif request.method == 'POST' and 'create_upl' in request.POST:
@@ -871,7 +873,7 @@ def edit_upl(request):
         trackobjid = Track.objects.get(trackid=trackid)
         myplaylistobj = Myplaylist.objects.get(myplaylistid=myplaylistid)
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM MyPlaylistTracks WHERE MyPlaylistTracks.TrackId = %s and MyPlaylistTracks.TrackId =%s", [trackobjid.trackid, myplaylistobj.myplaylistid])
+        cursor.execute("DELETE FROM MyPlaylistTracks WHERE MyPlaylistTracks.TrackId = %s and MyPlaylistTracks.MyPlaylistID =%s", [trackobjid.trackid, myplaylistobj.myplaylistid])
     print("i guess this happens")
     form = SearchForm()
     person = None
@@ -892,3 +894,75 @@ def add_track_to_upl(request, trackidnum):
         newUPLTrack = Myplaylisttracks(myplaylistid = uplobj, trackid = trackobj)
         newUPLTrack.save()
     return HttpResponseRedirect("/edit_MyPlaylist/")
+
+def edit_epl(request):
+    trackresult = None
+    playlistid = request.session.get('eplplaylist', None)
+    if playlistid != None:
+        query1= "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, PlaylistTrack where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.TrackId = PlaylistTrack.TrackId and PlaylistTrack.PlaylistId =" + playlistid
+        trackresult = Track.objects.raw(query1)
+        print("does this happen?")
+    else:
+        trackresult = None
+    if request.method == 'POST' and 'search_track' in request.POST:
+        # We have a received a search.
+        print("now does this happen?")
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            print("Search form is valid!")
+            result = None
+            trackname = form.cleaned_data['track']
+            albumname = form.cleaned_data['album']
+            artistname = form.cleaned_data['artist']
+            composername = form.cleaned_data['composer']
+            genrename = form.cleaned_data['genre']
+            medianame = form.cleaned_data['media']
+            
+            query2 = "SELECT Track.TrackId, Track.Name, Artist.Name as artistname from Track, Album, Artist, Genre, MediaType where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\""
+
+            tracksearchresult = Track.objects.raw(query2)
+
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            # make a new form for the next search
+            form = SearchForm()
+            variables = RequestContext(request, {'tracksearchresult': tracksearchresult, 'person': person, 'form': form, 'trackresult':trackresult})
+            return render_to_response('search/playlist_details.html', variables,)
+        else:
+            print("Search form fields not valid.")
+            person = None
+            if request.user.is_authenticated():
+                person = Person.objects.get(username=request.user.get_username())
+            variables = RequestContext(request, {'person': person})
+            return render_to_response('/search/failure.html', variables,)
+    elif request.method == 'POST' and 'searchtrackname' in request.POST:
+        track_name = request.POST['searchtrackname']
+        print("You are trying to add the item " + track_name + " to the playlist!")
+        trackid = request.POST['searchtrackid']
+        return add_track_to_epl(request, trackid)
+    elif request.method == 'POST' and 'remove_track_upl' in request.POST:
+        print("deleting?")
+        trackid = request.POST['playlisttrackid']
+        trackobjid = Track.objects.get(trackid=trackid)
+        playlistobj = Playlist.objects.get(playlistid=playlistid)
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM PlaylistTrack WHERE PlaylistTrack.TrackId = %s and PlaylistTrack.PlaylistId =%s", [trackobjid.trackid, playlistobj.playlistid])
+    print("i guess this happens")
+    form = SearchForm()
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'form': form, 'person': person, 'trackresult':trackresult})
+    return render_to_response('search/playlist_details.html', variables)
+
+
+def add_track_to_epl(request, trackidnum):
+    playlistid = request.session['eplplaylist']
+    if playlistid != None:
+        uplobj = Playlist.objects.get(playlistid = playlistid)
+        trackobj = Track.objects.get(trackid= trackidnum)
+        newEPLTrack = Playlisttrack(playlistid = uplobj, trackid = trackobj)
+        newEPLTrack.save()
+    return HttpResponseRedirect("/playlist_details/")
+

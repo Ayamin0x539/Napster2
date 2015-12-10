@@ -20,8 +20,8 @@
     <form method="post" action=".">{% csrf_token %}
     <input id="id_playlistid" value="{{ playlist.playlistid }}" name="playlistid" type="number" style="width:60px" readonly /> 
     <input id="id_playlist" maxlength="40" value="{{ playlist.name }}" name="playlist" type="text" style="width:300px" readonly />
-    <input type="submit" value="Add To Cart">
-    <p>View Details?</p>
+    <input type="submit" name="view_playlist" value="View Details">
+    <input type="submit" name="add_playlist" value="Add To Cart">
     </form>
    </td></tr>
 
