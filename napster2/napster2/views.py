@@ -331,9 +331,10 @@ def remove_epl_from_cart(request, idnum):
 
 @login_required
 def search_playlists(request):
-    if request.method == 'POST' and 'track' in request.POST:
+    if request.method == 'POST' and 'search' in request.POST:
         # We have a received a search.
         form = PlaylistSearchForm(request.POST)
+        addform = PlaylistCreateForm()
         if form.is_valid():
             print("Search form is valid!")
             result = None
@@ -341,16 +342,19 @@ def search_playlists(request):
             trackname = form.cleaned_data['track']
             artistname = form.cleaned_data['artist']
             genrename = form.cleaned_data['genre']
-            
-            query = "SELECT Playlist.PlaylistId, Playlist.Name from Track, Album, Playlist, Artist, PlaylistTrack, Genre where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.TrackId = PlaylistTrack.TrackId and Playlist.PlaylistId = PlaylistTrack.PlaylistId and Track.Name like \"%%" + trackname + "%%\" and Playlist.Name like \"%%" + playlistname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Genre.Name like \"%%" + genrename + "%%\" group by Name"
+            if playlistname == "" and trackname == "" and artistname == "" and genrename == "":
+                query = "SELECT Playlist.PlaylistId, Playlist.Name from Playlist group by name"
+            else: 
+                query = "SELECT Playlist.PlaylistId, Playlist.Name from Track, Album, Playlist, Artist, PlaylistTrack, Genre where Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.TrackId = PlaylistTrack.TrackId and Playlist.PlaylistId = PlaylistTrack.PlaylistId and Track.Name like \"%%" + trackname + "%%\" and Playlist.Name like \"%%" + playlistname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Genre.Name like \"%%" + genrename + "%%\" group by Name"
 
             result = Playlist.objects.raw(query)
             person = None
+            print("did i query?")
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
             # make a new form for the next search
             form = PlaylistSearchForm()
-            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
+            variables = RequestContext(request, {'result': result, 'person': person, 'form': form, 'addform':addform})
             return render_to_response('search/search_playlists.html', variables,)
         else:
             print("Search form fields not valid.")
@@ -363,17 +367,25 @@ def search_playlists(request):
         playlist_name = request.POST['playlist']
         playlistid = request.POST['playlistid']
         return add_epl_to_cart(request, playlistid)
+    elif request.method == 'POST' and 'add_epl' in request.POST:
+        addform = PlaylistCreateForm(request.POST)
+        if addform.is_valid():
+            if addform.cleaned_data['name'] != '':
+                playlist = Playlist(name = addform.cleaned_data['name'])
+                playlist.save()
+                print("did i add?")
     elif request.method == 'POST' and 'view_playlist' in request.POST:
         request.session['eplplaylist'] = request.POST['playlistid']
         request.session.modified = True
         return HttpResponseRedirect("/playlist_details/")
-    else:
-        form = PlaylistSearchForm()
-        person = None
-        if request.user.is_authenticated():
-            person = Person.objects.get(username=request.user.get_username())
-        variables = RequestContext(request, {'form': form, 'person': person})
-        return render_to_response('search/search_playlists.html', variables)
+    print("did i get here?")
+    form = PlaylistSearchForm()
+    addform = PlaylistCreateForm()
+    person = None
+    if request.user.is_authenticated():
+        person = Person.objects.get(username=request.user.get_username())
+    variables = RequestContext(request, {'form': form, 'person': person, 'addform':addform})
+    return render_to_response('search/search_playlists.html', variables)
 
 
 @login_required
@@ -579,22 +591,14 @@ def sales_reporting(request):
         if form.is_valid():
             print("Search form is valid!")
             result = None
-            trackname = form.cleaned_data['track']
-            albumname = form.cleaned_data['album']
-            artistname = form.cleaned_data['artist']
-            composername = form.cleaned_data['composer']
-            genrename = form.cleaned_data['genre']
-            medianame = form.cleaned_data['media']
-            firstname = form.cleaned_data['firstname']
-            lastname = form.cleaned_data['lastname']
-            phone = form.cleaned_data['phone']
-            email = form.cleaned_data['email']
-            postalcode = form.cleaned_data['postalcode']
-            address = form.cleaned_data['address']
-            city = form.cleaned_data['city']
-            state = form.cleaned_data['state']
-            country = form.cleaned_data['country']
-                
+            month = forms.cleaned_data['month']
+            begin_date = forms.cleaned_data['begin_date']
+            end_date = forms.cleaned_data['end_date']
+            city = forms.cleaned_data['city']
+            state = forms.cleaned_data['state']
+            country = forms.cleaned_data['country']
+            firstname = forms.cleaned_data['firstname']
+            lastname = forms.cleaned_data['lastname']
             query = "SELECT OrderTrack.OrderTrackId, OrderTrack.OrderId, from Track, Album, Artist, Genre, MediaType, Person, OrderTrack, Order, Customer where OrderTrack.OrderTrackId = Track.TrackId and Order.OrderID = OrderTracks.OrderId and Customer.CustomerId = Order.CustomerID and Person.PersonID = Customer.CustPersonID and Order.OrderTrackId = Track.TrackId and Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\" and Person.Phone like \"%%" + phone + "%%\" and Person.email like \"%%" + email + "%%\" and Person.postalcode like \"%%" + postalcode + "%%\" and Person.Address like \"%%" + address + "%%\" and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\"" 
 
             result = OrderTrack.objects.raw(query)
