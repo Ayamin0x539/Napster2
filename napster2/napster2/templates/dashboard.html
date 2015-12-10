@@ -5,7 +5,9 @@
 
 {% if person.affiliation == "Customer" %}
 Welcome, customer! <br />
+<b><u>Quick Search: </u></b>
 <!-- Customer dashboard. -->
+
 <form method="post" action=".">{% csrf_token %}
   <table border="0">
     {{ qsform.as_table }}
@@ -13,7 +15,7 @@ Welcome, customer! <br />
 <input type="submit" name="quicksearch" value="Search" />
 </form>
 
-Unfilled orders: <br />
+<b>Unfilled orders:</b><br />
 {% if unfilled_orders %}
 <table border="0">
   {% for order in unfilled_orders %}
@@ -31,7 +33,7 @@ Unfilled orders: <br />
 -none-<br />
 {% endif %}
 
-Filled orders: <br />
+<b>Filled orders:</b> <br />
 {% if filled_orders %}
 <table border="0">
   {% for order in filled_orders %}
