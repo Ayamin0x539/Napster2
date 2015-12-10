@@ -120,3 +120,20 @@ class InventoryReportingForm(forms.Form):
     genre = forms.CharField(label='Genre', max_length=40, required=False)
     media = forms.CharField(label='Media', max_length=10, required=False)
     
+class SalesReportingForm(forms.Form):
+    track = forms.CharField(label='Track Name', max_length=40, required=False)
+    album = forms.CharField(label='Album Name', max_length=40, required=False)
+    artist = forms.CharField(label='Artist Name', max_length=40, required=False)
+    composer = forms.CharField(label='Composer', max_length=40, required=False)
+    genre = forms.CharField(label='Genre', max_length=40, required=False)
+    media = forms.CharField(label='Media', max_length=10, required=False)
+    firstname = forms.CharField(label='Customer First Name', max_length=40, required=False)
+    lastname = forms.CharField(label='Customer Last Name', max_length=20, required=False)
+    phone = forms.CharField(label='Customer Phone Number', max_length=60, required=False)
+    email = forms.CharField(label='Customer Email', max_length=30, required=False)
+    postalcode = forms.CharField(label='Customer Zip/Postal Code', max_length=10, required=False)
+    address = forms.CharField(label='Customer Address', max_length = 70, required=False)
+    city = forms.CharField(label='City', max_length=40, required=False)
+    state = forms.CharField(label='State', max_length=40, required=False)
+    country = forms.CharField(label='Country', max_length=45, required=False)
+    
