@@ -475,8 +475,9 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
         # Insert into OrderCustPlaylist (m:n relationship).
         # Need to insert each playlist.
         for item in upl_cart: # item: (id, name, price)
-            playlistid = int(item[0]) 
-            ordercustplaylist = Ordercustplaylist(ordercustid=customer, custplaylistid=playlistid)
+            playlist_id = int(item[0]) 
+            playlist = Myplaylist.objects.get(myplaylistid=playlist_id)
+            ordercustplaylist = Ordercustplaylist(ordercustid=order, custplaylistid=playlist)
             ordercustplaylist.save()
     # Case 3: We have playlist items in employee-made playlists to check out.
     if epl_cart:
@@ -490,8 +491,9 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
         # Insert into OrderEmpPlaylist (m:n relationship).
         # Need to insert each playlist.
         for item in epl_cart: #item: (id, name, price)
-            playlistid = int(item[0]) # I guess orderempid is really the customer id.... lolwut. bad naming.
-            orderempplaylist = Orderempplaylist(orderempid=customer.customerid, empplaylistid=playlistid)
+            playlist_id = int(item[0]) # I guess orderempid is really the order.... lolwut. bad naming.
+            playlist = Playlist.objects.get(playlistid=playlist_id)
+            orderempplaylist = Orderempplaylist(orderempid=order, empplaylistid=playlist)
             orderempplaylist.save()
 
     variables = RequestContext(request, {'person': person})
@@ -664,13 +666,19 @@ def inventory_reporting(request):
             tracks_found = Track.objects.raw(query)
             num_tracks_found = str(len(list(tracks_found)))
             print("Found " + num_tracks_found + " results in search!")
+            
+            total_price = 0
+            for track in tracks_found:
+                total_price += float(track.unitprice)
+            total_price = float('%.2f'%total_price)
+            total_price = str(total_price)
 
             person = None
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
             # make a new form for the next search
             form = SearchForm()
-            variables = RequestContext(request, {'tracks_found': tracks_found, 'person': person, 'form': form, 'num_tracks_found': num_tracks_found})
+            variables = RequestContext(request, {'tracks_found': tracks_found, 'person': person, 'form': form, 'num_tracks_found': num_tracks_found, 'total_price': total_price})
             return render_to_response('reporting/inventory.html', variables,)
         else:
             print("Search form fields not valid.")
