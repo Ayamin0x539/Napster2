@@ -140,6 +140,8 @@ def view_order_details(request, order_id):
         return render_to_response('orders/customer_view_order_details.html', variables,)
     if order.playlistmadby == "Employee":
         # It's an employee-made playlist order.
+        emp_playlist_query = "SELECT * FROM Playlist, `Order`, OrderEmpPlaylist where `Order`.OrderID = OrderEmpPlaylist.OrderEmpID AND OrderEmpPlaylist.EmpPlaylistID = Playlist.PlaylistId AND `Order`.OrderID = '" + order_id + "'"
+        playlists = Playlist.objects.raw(emp_playlist_query)
         variables = RequestContext(request, {'person': person, 'order': order})
         return render_to_response('orders/customer_view_order_details.html', variables,)
 
@@ -573,39 +575,40 @@ def update_success(request):
 
 @login_required
 def sales_reporting(request):
+    if request.method == 'POST' and 'view_order_details' in request.POST:
+        return view_order_details(request, request.POST['orderid'])
     if request.method == 'POST' and 'search' in request.POST:
         # We have a received a search.
         form = SalesReportingForm(request.POST)
         if form.is_valid():
             print("Search form is valid!")
-            result = None
-            trackname = form.cleaned_data['track']
-            albumname = form.cleaned_data['album']
-            artistname = form.cleaned_data['artist']
-            composername = form.cleaned_data['composer']
-            genrename = form.cleaned_data['genre']
-            medianame = form.cleaned_data['media']
-            firstname = form.cleaned_data['firstname']
-            lastname = form.cleaned_data['lastname']
-            phone = form.cleaned_data['phone']
-            email = form.cleaned_data['email']
-            postalcode = form.cleaned_data['postalcode']
-            address = form.cleaned_data['address']
+            orders_found = None
+            month = form.cleaned_data['month']
+            begin_date = form.cleaned_data['begin_date']
+            end_date = form.cleaned_data['end_date']
             city = form.cleaned_data['city']
             state = form.cleaned_data['state']
             country = form.cleaned_data['country']
+            firstname = form.cleaned_data['firstname']
+            lastname = form.cleaned_data['lastname']
                 
-            query = "SELECT OrderTrack.OrderTrackId, OrderTrack.OrderId, from Track, Album, Artist, Genre, MediaType, Person, OrderTrack, Order, Customer where OrderTrack.OrderTrackId = Track.TrackId and Order.OrderID = OrderTracks.OrderId and Customer.CustomerId = Order.CustomerID and Person.PersonID = Customer.CustPersonID and Order.OrderTrackId = Track.TrackId and Track.AlbumId = Album.AlbumId and Album.ArtistId = Artist.ArtistId and Track.GenreId = Genre.GenreId and Track.MediaTypeId = MediaType.MediaTypeId and Track.Name like \"%%" + trackname + "%%\" and Album.Title like \"%%" + albumname + "%%\" and Artist.Name like \"%%" + artistname + "%%\" and Track.Composer like \"%%" + composername + "%%\" and Genre.Name like \"%%" + genrename + "%%\" and MediaType.Name like \"%%" + medianame + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\" and Person.Phone like \"%%" + phone + "%%\" and Person.email like \"%%" + email + "%%\" and Person.postalcode like \"%%" + postalcode + "%%\" and Person.Address like \"%%" + address + "%%\" and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\"" 
+            orders_query = "SELECT * from Person, `Order`, Customer where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = Order.CustomerID and `Order`.DateEntered like \"%%-" + month + "-%%\" and `Order`.DateEntered >= " + begin_date + " and `Order`.DateEntered <= " + end_date + " and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
 
-            result = OrderTrack.objects.raw(query)
-            print("Found " + str(len(list(result))) + " results in search!")
+            orders_found = Order.objects.raw(query)
+            num_orders_found = str(len(list(orders_found)))
+            print("Number of orders found: " + num_orders_found)
+
+            tracks_query = "SELECT * from Person, `Order`, Customer, OrderTrack, Track where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = `Order`.CustomerID and OrderTrack.OrderId = `Order`.OrderID and OrderTrack.OrderTrackId = Track.TrackId and `Order`.DateEntered like \"%%-" + month + "-%%\" and `Order`.DateEntered >= " + begin_date + " and `Order`.DateEntered <= " + end_date + " and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
+            tracks_found = Track.objects.raw(query)
+            num_tracks_found = str(len(list(tracks_found)))
+            print("Number of tracks found: " + num_tracks_found)
 
             person = None
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
             # make a new form for the next search
             form = SearchForm()
-            variables = RequestContext(request, {'result': result, 'person': person, 'form': form})
+            variables = RequestContext(request, {'person': person, 'form': form, 'orders_found': orders_found, 'num_orders_found': num_orders_found, 'tracks_found': tracks_found, 'num_tracks_found': num_tracks_found})
             return render_to_response('reporting/sales.html', variables,)
         else:
             print("Search form fields not valid.")

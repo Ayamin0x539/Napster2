@@ -103,9 +103,9 @@ class DemographicsForm(forms.Form):
     fax = forms.CharField(label='Fax', max_length=45, required=False)
 
 class SalesReportingForm(forms.Form):
-    month = forms.CharField(label='Month', max_length=40, required=False)
-    begin_date = forms.CharField(label='Begin Date', max_length=40, required=False)
-    end_date = forms.CharField(label='End Date', max_length=40, required=False)
+    month = forms.CharField(label='Month (number)', max_length=40, required=False)
+    begin_date = forms.CharField(label='Begin Date (YYYY/MM/DD)', max_length=40, required=False)
+    end_date = forms.CharField(label='End Date (YYYY/MM/DD)', max_length=40, required=False)
     city = forms.CharField(label='City', max_length=40, required=False)
     state = forms.CharField(label='State', max_length=40, required=False)
     country = forms.CharField(label='Country', max_length=10, required=False)

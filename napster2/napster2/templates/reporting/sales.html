@@ -24,10 +24,18 @@ Search for Sales: <br />
 
 <!-- Format below to pull sales results from the result. -->
 
-{% if result != None %}
+{% if orders_found != None %}
 <hr> 
- <b> Search results:</b><br />
+ <b> Found {{ num_orders_found }} orders and {{ num_tracks_found }} tracks::</b><br />
 <hr> <br />
+{% for order in orders_found %}
+    <form method="post" action=".">{% csrf_token %}
+    <input id="id_orderid" value="{{ order.orderid }}" name="orderid" type="number" style="width:60px" readonly />
+    <input id="id_date" maxlength="40" value="{{ order.dateentered }}" name="orderdate" type="text" readonly />
+    <input id="id_price" value="${{ order.price }}" name="price" type="text" style="width:60px" readonly />
+    <input type="submit" name="view_order_details" value="View Details">
+    </form>
+{% endfor %}
  
 {% endif %}
 
