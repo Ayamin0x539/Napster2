@@ -592,23 +592,41 @@ def sales_reporting(request):
             firstname = form.cleaned_data['firstname']
             lastname = form.cleaned_data['lastname']
                 
-            orders_query = "SELECT * from Person, `Order`, Customer where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = Order.CustomerID and `Order`.DateEntered like \"%%-" + month + "-%%\" and `Order`.DateEntered >= " + begin_date + " and `Order`.DateEntered <= " + end_date + " and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
+            orders_query = "SELECT * from Person, `Order`, Customer where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = Order.CustomerID and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
+            
+            if month != "":
+                orders_query += " and `Order`.DateEntered like \"%%-" + month + "-%%\""
+            if begin_date != "":
+                orders_query +=  "and `Order`.DateEntered >= " + begin_date
+            if end_date != "":
+                orders_query += "and `Order`.DateEntered <= " + end_date
 
-            orders_found = Order.objects.raw(query)
+            orders_found = Order.objects.raw(orders_query)
             num_orders_found = str(len(list(orders_found)))
             print("Number of orders found: " + num_orders_found)
 
-            tracks_query = "SELECT * from Person, `Order`, Customer, OrderTrack, Track where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = `Order`.CustomerID and OrderTrack.OrderId = `Order`.OrderID and OrderTrack.OrderTrackId = Track.TrackId and `Order`.DateEntered like \"%%-" + month + "-%%\" and `Order`.DateEntered >= " + begin_date + " and `Order`.DateEntered <= " + end_date + " and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
-            tracks_found = Track.objects.raw(query)
+            tracks_query = "SELECT * from Person, `Order`, Customer, OrderTrack, Track where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = `Order`.CustomerID and OrderTrack.OrderId = `Order`.OrderID and OrderTrack.OrderTrackId = Track.TrackId and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
+
+            if begin_date != "":
+                tracks_query +=  "and `Order`.DateEntered >= " + begin_date
+            if end_date != "":
+                tracks_query += "and `Order`.DateEntered <= " + end_date
+
+            tracks_found = Track.objects.raw(tracks_query)
             num_tracks_found = str(len(list(tracks_found)))
             print("Number of tracks found: " + num_tracks_found)
+
+            total_price = 0
+            for order in orders_found:
+                total_price += float(order.price)
+            total_price = str(total_price)
 
             person = None
             if request.user.is_authenticated():
                 person = Person.objects.get(username=request.user.get_username())
             # make a new form for the next search
-            form = SearchForm()
-            variables = RequestContext(request, {'person': person, 'form': form, 'orders_found': orders_found, 'num_orders_found': num_orders_found, 'tracks_found': tracks_found, 'num_tracks_found': num_tracks_found})
+            form = SalesReportingForm()
+            variables = RequestContext(request, {'person': person, 'form': form, 'orders_found': orders_found, 'num_orders_found': num_orders_found, 'tracks_found': tracks_found, 'num_tracks_found': num_tracks_found, 'total_price': total_price})
             return render_to_response('reporting/sales.html', variables,)
         else:
             print("Search form fields not valid.")

@@ -26,7 +26,7 @@ Search for Sales: <br />
 
 {% if orders_found != None %}
 <hr> 
- <b> Found {{ num_orders_found }} orders and {{ num_tracks_found }} tracks::</b><br />
+ <b> Found {{ num_orders_found }} orders and {{ num_tracks_found }} tracks for a total of ${{ total_price }}:</b><br />
 <hr> <br />
 {% for order in orders_found %}
     <form method="post" action=".">{% csrf_token %}
