@@ -610,6 +610,8 @@ def sales_reporting(request):
 
             tracks_query = "SELECT * from Person, `Order`, Customer, OrderTrack, Track where Person.PersonID = Customer.CustPersonID and Customer.CustomerId = `Order`.CustomerID and OrderTrack.OrderId = `Order`.OrderID and OrderTrack.OrderTrackId = Track.TrackId and `Order`.Confirmed = 't' and Person.City like \"%%" + city + "%%\" and Person.State like \"%%" + state + "%%\" and Person.Country like \"%%" + country + "%%\" and Person.FirstName like \"%%" + firstname + "%%\" and Person.LastName like \"%%" + lastname + "%%\""
 
+            if month != "":
+                tracks_query += " and `Order`.DateEntered like \"%%-" + month + "-%%\""            
             if begin_date != "":
                 tracks_query +=  "and `Order`.DateEntered >= " + begin_date
             if end_date != "":
