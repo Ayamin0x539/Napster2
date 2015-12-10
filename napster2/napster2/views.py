@@ -143,7 +143,7 @@ def view_order_details(request, order_id):
     if order.playlistmadby == "Customer":
         # It's a customer-made playlist order.
         cust_playlist_query = "SELECT * FROM MyPlaylist, `Order`, OrderCustPlaylist where `Order`.OrderID = OrderCustPlaylist.OrderCustID AND OrderCustPlaylist.CustPlaylistID = MyPlaylist.MyPlaylistID AND `Order`.OrderID = '" + order_id + "'"
-        playlists = MyPlaylist.objects.raw(cust_playlist_query)
+        playlists = Myplaylist.objects.raw(cust_playlist_query)
         variables = RequestContext(request, {'person': person, 'order': order, 'playlists': playlists})
         return render_to_response('orders/customer_view_order_details.html', variables,)
     if order.playlistmadby == "Employee":
