@@ -127,8 +127,6 @@ def dashboard(request):
         variables = RequestContext(request, {'person': person, 'user': request.user,  'unfilled_orders': unfilled_orders})
         return render_to_response('dashboard.html', variables,)
 
-
-
 def view_order_details(request, order_id):
     person = None
     if request.user.is_authenticated():
@@ -150,7 +148,7 @@ def view_order_details(request, order_id):
         # It's an employee-made playlist order.
         emp_playlist_query = "SELECT * FROM Playlist, `Order`, OrderEmpPlaylist where `Order`.OrderID = OrderEmpPlaylist.OrderEmpID AND OrderEmpPlaylist.EmpPlaylistID = Playlist.PlaylistId AND `Order`.OrderID = '" + order_id + "'"
         playlists = Playlist.objects.raw(emp_playlist_query)
-        variables = RequestContext(request, {'person': person, 'order': order})
+        variables = RequestContext(request, {'person': person, 'order': order, 'playlists': playlists})
         return render_to_response('orders/customer_view_order_details.html', variables,)
 
 @login_required
@@ -490,9 +488,10 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
 
     # Case 1: We have track items in the track cart to check out.
     if track_cart:
+        print("Checkout_Success: Track Cart.") 
         # Calculate price.
         for item in track_cart:
-            total_track += float(item[2][1:])
+            total_track += float(item[2])
         total_track = float('%.2f'%(total_track))
         # Insert into Order.
         order = Order(customerid=customer, price=str(total_track), dateentered=sql_date_obj, confirmed='f')
@@ -506,9 +505,10 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
             ordertrack.save()
     # Case 2: We have playlist items in user-made playlists to check out.
     if upl_cart:
+        print("Checkout_Success: UPL Cart.") 
         # Calculate price.
         for item in upl_cart:
-            total_upl += float(item[2][1:])
+            total_upl += float(item[2])
         total_upl = float('%.2f'%(total_upl))
         # Insert into Order.
         order = Order(customerid=customer, playlistmadby="Customer",price=str(total_upl), dateentered=sql_date_obj, confirmed='f')
@@ -522,12 +522,14 @@ def checkout_success(request, track_cart, upl_cart, epl_cart):
             ordercustplaylist.save()
     # Case 3: We have playlist items in employee-made playlists to check out.
     if epl_cart:
+        print("Checkout_Success: EPL Cart.") 
         # Calculate price.
         for item in epl_cart:
-            total_epl += float(item[2][1:])
+            total_epl += float(item[2])
         total_epl = float('%.2f'%(total_epl))
+        print("Total price of EPL cart: " + str(total_epl))
         # Insert into Order.
-        order = Order(customerid=customer.customerid, playlistmadby="Employee",price=str(total_upl), dateentered=sql_date_obj, confirmed='f')
+        order = Order(customerid=customer, playlistmadby="Employee",price=str(total_epl), dateentered=sql_date_obj, confirmed='f')
         order.save()
         # Insert into OrderEmpPlaylist (m:n relationship).
         # Need to insert each playlist.
