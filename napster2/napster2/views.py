@@ -339,6 +339,7 @@ def add_epl_to_cart(request, idnum):
     total_cost = 0
     for track in tracks:
         total_cost += track.unitprice
+        print("In adding epl to cart, added track price " + str(track.unitprice))
     total_cost = float('%.2f'%total_cost) # truncate to 2 decimal places
     data = (idnum, epl_obj.name, str(total_cost))
     if epl_cart:
@@ -439,16 +440,16 @@ def checkout(request):
     if track_cart:
         # Calculate price.
         for item in track_cart:
-            total_price += float(item[2][1:])
+            total_price += float(item[2])
     if upl_cart:
         # Calculate price.
         for item in upl_cart:
-            total_price += float(item[2][1:])
+            total_price += float(item[2])
     if epl_cart:
         # Calculate price.
         for item in epl_cart:
             print(item[2][1:])
-            total_price += float(item[2][1:])
+            total_price += float(item[2])
 
     total_price = str(float('%.2f'%total_price))
     print("Total price: " + total_price)
